@@ -13,6 +13,7 @@
     "medusa"
   ],
   "scripts": {
+    "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start",
