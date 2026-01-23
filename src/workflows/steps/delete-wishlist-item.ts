@@ -60,7 +60,7 @@ export const deleteWishlistItemStep = createStep(
 
     // Emit wishlist.item_removed event
     try {
-      const eventBusService = container.resolve("eventBusService");
+      const eventBusService = container.resolve("eventBusService") as any;
       await eventBusService.emit("wishlist.item_removed", {
         id: item.id,
         wishlist_id: wishlist.id,
@@ -84,10 +84,12 @@ export const deleteWishlistItemStep = createStep(
       container.resolve(WISHLIST_MODULE);
 
     // Restore the deleted item using service method
-    await wishlistService.upsertWishlistItems({
-      wishlist_id: compensationData.wishlist_id,
-      product_variant_id: compensationData.product_variant_id,
-    });
+    await wishlistService.createWishlistItems([
+      {
+        wishlist_id: compensationData.wishlist_id,
+        product_variant_id: compensationData.product_variant_id,
+      },
+    ]);
   }
 );
 

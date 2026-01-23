@@ -1,4 +1,4 @@
 import { defineMiddlewares } from "@medusajs/framework";
-import { storeSearchRoutesMiddlewares } from "./store/search/middlewares";
+import { storeSearchRoutesMiddlewares } from "./search/middlewares";
 
 export default defineMiddlewares([...storeSearchRoutesMiddlewares]);

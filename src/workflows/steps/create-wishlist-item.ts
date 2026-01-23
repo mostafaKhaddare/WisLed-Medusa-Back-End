@@ -75,14 +75,16 @@ export const createWishlistItemStep = createStep(
     // Create wishlist item - use the service's create method for WishlistItem
     // MedusaService provides create method for each model
     try {
-      const [item] = await wishlistService.upsertWishlistItems({
-        wishlist_id: wishlist.id,
-        product_variant_id: input.variant_id,
-      });
+      const [item] = await wishlistService.createWishlistItems([
+        {
+          wishlist_id: wishlist.id,
+          product_variant_id: input.variant_id,
+        },
+      ]);
 
       // Emit wishlist.item_added event
       try {
-        const eventBusService = container.resolve("eventBusService");
+        const eventBusService = container.resolve("eventBusService") as any;
         await eventBusService.emit("wishlist.item_added", {
           id: item.id,
           wishlist_id: wishlist.id,

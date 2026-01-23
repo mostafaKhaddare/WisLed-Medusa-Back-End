@@ -32,16 +32,17 @@ export const createWishlistStep = createStep(
       return new StepResponse(existingWishlists[0], existingWishlists[0]);
     }
 
-    // Create new wishlist using upsert method
-    const [wishlist] = await wishlistService.upsertWishlists({
-      customer_id: input.customer_id,
-      sales_channel_id: input.sales_channel_id,
-      title: input.title,
-    });
+    const [wishlist] = await wishlistService.createWishlists([
+      {
+        customer_id: input.customer_id,
+        sales_channel_id: input.sales_channel_id,
+        title: input.title,
+      },
+    ]);
 
     // Emit wishlist.created event
     try {
-      const eventBusService = container.resolve("eventBusService");
+      const eventBusService = container.resolve("eventBusService") as any;
       await eventBusService.emit("wishlist.created", {
         id: wishlist.id,
         customer_id: wishlist.customer_id,

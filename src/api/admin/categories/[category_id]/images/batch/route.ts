@@ -1,7 +1,6 @@
 import {
   MedusaRequest,
   MedusaResponse,
-  MedusaResponse,
 } from "@medusajs/framework/http";
 
 import { updateCategoryImagesWorkflow } from "../../../../../../workflows/update-category-images";
@@ -32,7 +31,10 @@ export async function POST(
 
   res: MedusaResponse
 ): Promise<void> {
-  const { updates } = req.validatedBody;
+  const updates = req.validatedBody.updates.map((u) => ({
+    id: u.id,
+    type: u.type,
+  }));
 
   const { result } = await updateCategoryImagesWorkflow(req.scope).run({
     input: { updates },

@@ -131,7 +131,7 @@ export async function GET(
 }
 
 export async function POST(
-  req: AuthenticatedMedusaRequest,
+  req: AuthenticatedMedusaRequest<{ variant_id: string }>,
   res: MedusaResponse
 ) {
   if (!req.auth_context?.actor_id) {

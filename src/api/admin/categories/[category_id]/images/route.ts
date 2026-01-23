@@ -32,9 +32,10 @@ export async function POST(
   // Add category_id to each image
 
   const category_images = images.map((image) => ({
-    ...image,
-
     category_id,
+    type: image.type,
+    url: image.url,
+    file_id: image.file_id,
   }));
 
   const { result } = await createCategoryImagesWorkflow(req.scope).run({
