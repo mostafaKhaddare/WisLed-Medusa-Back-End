@@ -13,16 +13,6 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
-  admin: {
-    develop: {
-      host: process.env.ADMIN_HOST || "localhost",
-      port: process.env.ADMIN_PORT || 7001,
-      open: false, // Avoids opening browser on server start
-      allowedHosts: [
-        "wisled-medusa-back-end-production.up.railway.app",
-      ],
-    },
-  },
   modules: [
     {
       resolve: "./src/modules/product-media",
