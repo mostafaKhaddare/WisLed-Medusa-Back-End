@@ -18,6 +18,18 @@ module.exports = defineConfig({
     disable: process.env.DISABLE_ADMIN_UI === "true",
   },
   modules: {
+    wishlist: {
+      resolve: "./src/modules/wishlist",
+      definition: {
+        isQueryable: true,
+      },
+    },
+    productMedia: {
+      resolve: "./src/modules/product-media",
+      definition: {
+        isQueryable: true,
+      },
+    },
     eventBus: {
       resolve: "@medusajs/event-bus-redis",
       options: {
@@ -30,12 +42,9 @@ module.exports = defineConfig({
         redisUrl: process.env.REDIS_URL
       }
     },
-    locking: {
-        resolve: "@medusajs/locking-redis",
-        options: {
-            redisUrl: process.env.REDIS_URL
-        }
-    },
+  },
+  featureFlags: {
+    medusa_v2: true,
+    redis_locking: true
   },
 });
-

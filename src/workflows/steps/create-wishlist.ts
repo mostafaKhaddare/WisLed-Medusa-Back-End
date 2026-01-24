@@ -29,7 +29,15 @@ export const createWishlistStep = createStep(
     });
 
     if (existingWishlists && existingWishlists.length > 0) {
-      return new StepResponse(existingWishlists[0], existingWishlists[0]);
+      const { data: [existingWishlist] } = await query.graph({
+        entity: "wishlist",
+        fields: ["*", "customer.*", "sales_channel.*"],
+        filters: {
+          id: existingWishlists[0].id,
+        },
+      });
+
+      return new StepResponse(existingWishlist, existingWishlist);
     }
 
     const [wishlist] = await wishlistService.createWishlists([
@@ -54,7 +62,15 @@ export const createWishlistStep = createStep(
       console.error("Failed to emit wishlist.created event:", error);
     }
 
-    return new StepResponse(wishlist, wishlist);
+    const { data: [createdWishlist] } = await query.graph({
+      entity: "wishlist",
+      fields: ["*", "customer.*", "sales_channel.*"],
+      filters: {
+        id: wishlist.id,
+      },
+    });
+
+    return new StepResponse(createdWishlist, createdWishlist);
   },
   async (compensationData, { container }) => {
     if (!compensationData) {

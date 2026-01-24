@@ -38,7 +38,7 @@ export const createWishlistItemStep = createStep(
     // Get or create wishlist using Query API
     const { data: wishlists } = await query.graph({
       entity: "wishlist",
-      fields: ["*"],
+      fields: ["*", "customer.*", "sales_channel.*"],
       filters: {
         customer_id: input.customer_id,
         sales_channel_id: input.sales_channel_id,
@@ -54,7 +54,16 @@ export const createWishlistItemStep = createStep(
           sales_channel_id: input.sales_channel_id,
         },
       });
-      wishlist = result.wishlist;
+
+      const { data: [newWishlist] } = await query.graph({
+        entity: "wishlist",
+        fields: ["*", "customer.*", "sales_channel.*"],
+        filters: {
+          id: result.wishlist.id,
+        },
+      });
+
+      wishlist = newWishlist;
     }
 
     // Check if item already exists using query API

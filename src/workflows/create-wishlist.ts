@@ -14,11 +14,12 @@ export type CreateWishlistInput = {
 export const createWishlistWorkflow = createWorkflow(
   "create-wishlist",
   (input: CreateWishlistInput) => {
-    const wishlist = createWishlistStep({
-      customer_id: input.customer_id,
-      sales_channel_id: input.sales_channel_id,
+    const stepInput = {
+      ...input,
       title: input.title || "My Wishlist",
-    });
+    };
+
+    const wishlist = createWishlistStep(stepInput);
 
     return new WorkflowResponse({ wishlist });
   }

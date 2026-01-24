@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
-    "build": "medusa migration run && medusa build",
+    "build": "medusa db:migrate && medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start --host 0.0.0.0 --port $PORT",
     "dev": "medusa develop",
