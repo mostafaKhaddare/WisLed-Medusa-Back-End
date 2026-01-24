@@ -15,6 +15,7 @@
   "scripts": {
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "build": "medusa db:migrate && medusa build",
+    "predeploy": "medusa db:migrate",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start --host 0.0.0.0 --port $PORT",
     "dev": "medusa develop",
@@ -26,18 +27,19 @@
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.10.3",
+    "@medusajs/cache-redis": "^2.0.0",
     "@medusajs/cli": "2.10.3",
+    "@medusajs/event-bus-redis": "^2.0.0",
     "@medusajs/framework": "2.10.3",
+    "@medusajs/locking-redis": "^2.0.0",
     "@medusajs/medusa": "2.10.3",
+    "@medusajs/workflow-engine-redis": "^2.10.3",
     "@mikro-orm/core": "6.4.3",
     "@mikro-orm/knex": "6.4.3",
     "@mikro-orm/migrations": "6.4.3",
     "@mikro-orm/postgresql": "6.4.3",
     "awilix": "^8.0.1",
-    "pg": "^8.13.0",
-    "@medusajs/event-bus-redis": "^2.0.0",
-    "@medusajs/cache-redis": "^2.0.0",
-    "@medusajs/locking-redis": "^2.0.0"
+    "pg": "^8.13.0"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.10.3",

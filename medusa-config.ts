@@ -4,6 +4,7 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 module.exports = defineConfig({
   projectConfig: {
+    workerMode: process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server",
     redisUrl: process.env.REDIS_URL,
     databaseUrl: process.env.DATABASE_URL,
     http: {
@@ -15,21 +16,10 @@ module.exports = defineConfig({
     },
   },
   admin: {
-    disable: process.env.DISABLE_ADMIN_UI === "true",
+    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    backendUrl: process.env.BACKEND_URL,
   },
   modules: {
-    wishlist: {
-      resolve: "./src/modules/wishlist",
-      definition: {
-        isQueryable: true,
-      },
-    },
-    productMedia: {
-      resolve: "./src/modules/product-media",
-      definition: {
-        isQueryable: true,
-      },
-    },
     eventBus: {
       resolve: "@medusajs/event-bus-redis",
       options: {
@@ -41,6 +31,18 @@ module.exports = defineConfig({
       options: {
         redisUrl: process.env.REDIS_URL
       }
+    },
+    wishlist: {
+      resolve: "./src/modules/wishlist",
+      definition: {
+        isQueryable: true,
+      },
+    },
+    productMedia: {
+      resolve: "./src/modules/product-media",
+      definition: {
+        isQueryable: true,
+      },
     },
   },
   featureFlags: {
