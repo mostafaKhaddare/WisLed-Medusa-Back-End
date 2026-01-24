@@ -13,6 +13,10 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
+  admin: {
+    // Disable admin dashboard in production if needed
+    // disable: process.env.NODE_ENV === "production",
+  },
   modules: [
     {
       resolve: "./src/modules/product-media",
