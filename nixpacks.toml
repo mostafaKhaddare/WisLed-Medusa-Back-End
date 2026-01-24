@@ -17,4 +17,4 @@ cmds = [
 cmds = []
 
 [start]
-cmd = "yarn start"
+cmd = "yarn start:railway"

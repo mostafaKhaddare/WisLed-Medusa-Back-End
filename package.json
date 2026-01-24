@@ -17,6 +17,7 @@
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa build && medusa start",
+    "start:railway": "chmod +x start-railway.sh && ./start-railway.sh",
     "dev": "medusa develop",
     "create-admin": "medusa exec ./src/scripts/create-admin.ts",
     "create-publishable-key": "medusa exec ./src/scripts/create-publishable-key.ts",
