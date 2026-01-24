@@ -1,20 +1,20 @@
+# See https://nixpacks.com/docs/configuration/file for schema
 [variables]
-NODE_VERSION = "20"
-YARN_ENABLE_IMMUTABLE_INSTALLS = "true"
+NODE_VERSION = "18"
+YARN_ENABLE_IMMUTABLE_INSTALLS = "false"
 
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_18"]
 
 [phases.install]
 cmds = [
   "corepack enable",
   "corepack prepare yarn@3.2.3 --activate",
-  "yarn --version",
-  "yarn install --immutable --check-cache"
+  "yarn install"
 ]
 
 [phases.build]
-cmds = []
+cmds = ["yarn build"]
 
 [start]
-cmd = "yarn start:railway"
+cmd = "yarn start"

@@ -16,8 +16,7 @@
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
-    "start": "medusa build && medusa start",
-    "start:railway": "chmod +x start-railway.sh && ./start-railway.sh",
+    "start": "medusa start --host 0.0.0.0 --port $PORT",
     "dev": "medusa develop",
     "create-admin": "medusa exec ./src/scripts/create-admin.ts",
     "create-publishable-key": "medusa exec ./src/scripts/create-publishable-key.ts",
@@ -56,7 +55,7 @@
     "yalc": "^1.0.0-pre.53"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "packageManager": "yarn@3.2.3+sha512.f26f951f67de0c6a33ee381e5ff364709c87e70eb5e65c694e4facde3512f1fa80b8679e6ba31ce7d340fbb46f08dd683af9457e240f25a204be7427940d767e"
 }
