@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../../wisterLed/backend"
+		},
+		{
+			"path": "../../wisterLed/solace-medusa-starter"
+		}
+	]
+}

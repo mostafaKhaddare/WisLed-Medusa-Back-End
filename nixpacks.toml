@@ -14,7 +14,7 @@ cmds = [
 ]
 
 [phases.build]
-cmds = ["NODE_OPTIONS='--max-old-space-size=4096' yarn build"]
+cmds = []
 
 [start]
 cmd = "NODE_OPTIONS='--max-old-space-size=4096' yarn start"
