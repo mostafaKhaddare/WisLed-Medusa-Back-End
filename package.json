@@ -16,7 +16,7 @@
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
-    "start": "echo '=== Starting Medusa deployment ===' && echo 'Step 1: Building admin panel...' && medusa build && echo 'Step 2: Running database migrations...' && medusa db:migrate && echo 'Step 3: Starting server...' && medusa start",
+    "start": "medusa develop",
     "dev": "medusa develop",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
