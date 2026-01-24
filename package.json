@@ -16,7 +16,7 @@
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
-    "start": "medusa start",
+    "start": "medusa build && medusa start",
     "dev": "medusa develop",
     "create-admin": "medusa exec ./src/scripts/create-admin.ts",
     "create-publishable-key": "medusa exec ./src/scripts/create-publishable-key.ts",
