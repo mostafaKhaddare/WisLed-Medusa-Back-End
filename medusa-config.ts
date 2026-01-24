@@ -32,6 +32,14 @@ module.exports = defineConfig({
         redisUrl: process.env.REDIS_URL
       }
     },
+    workflowEngine: {
+      resolve: "@medusajs/workflow-engine-redis",
+      options: {
+        redis: {
+          url: process.env.REDIS_URL
+        }
+      }
+    },
     wishlist: {
       resolve: "./src/modules/wishlist",
       definition: {
@@ -44,9 +52,5 @@ module.exports = defineConfig({
         isQueryable: true,
       },
     },
-  },
-  featureFlags: {
-    medusa_v2: true,
-    redis_locking: true
   },
 });
