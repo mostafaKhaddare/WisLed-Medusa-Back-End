@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
-    "build": "medusa build",
+    "build": "medusa migration run && medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start --host 0.0.0.0 --port $PORT",
     "dev": "medusa develop",
@@ -34,7 +34,10 @@
     "@mikro-orm/migrations": "6.4.3",
     "@mikro-orm/postgresql": "6.4.3",
     "awilix": "^8.0.1",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "@medusajs/event-bus-redis": "^2.0.0",
+    "@medusajs/cache-redis": "^2.0.0",
+    "@medusajs/locking-redis": "^2.0.0"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.10.3",

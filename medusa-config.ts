@@ -4,6 +4,7 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 module.exports = defineConfig({
   projectConfig: {
+    redisUrl: process.env.REDIS_URL,
     databaseUrl: process.env.DATABASE_URL,
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:3000,https://wisled-medusa-back-end-production.up.railway.app",
@@ -14,15 +15,27 @@ module.exports = defineConfig({
     },
   },
   admin: {
-    // Disable admin dashboard in production if needed
-    // disable: process.env.NODE_ENV === "production",
+    disable: process.env.DISABLE_ADMIN_UI === "true",
   },
-  modules: [
-    {
-      resolve: "./src/modules/product-media",
+  modules: {
+    eventBus: {
+      resolve: "@medusajs/event-bus-redis",
+      options: {
+        redisUrl: process.env.REDIS_URL
+      }
     },
-    {
-      resolve: "./src/modules/wishlist",
+    cacheService: {
+      resolve: "@medusajs/cache-redis",
+      options: {
+        redisUrl: process.env.REDIS_URL
+      }
     },
-  ],
+    locking: {
+        resolve: "@medusajs/locking-redis",
+        options: {
+            redisUrl: process.env.REDIS_URL
+        }
+    },
+  },
 });
+
