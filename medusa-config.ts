@@ -4,9 +4,9 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 module.exports = defineConfig({
   projectConfig: {
-    workerMode: process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server",
-    redisUrl: process.env.REDIS_URL,
+    workerMode: process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server",     // redisUrl: process.env.REDIS_URL, // Commented out to avoid connection error
     databaseUrl: process.env.DATABASE_URL,
+    redisUrl: process.env.REDIS_URL,
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:3000,https://wisled-medusa-back-end-production.up.railway.app",
       adminCors: process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:3000,https://wisled-medusa-back-end-production.up.railway.app",
@@ -20,6 +20,7 @@ module.exports = defineConfig({
     backendUrl: process.env.BACKEND_URL,
   },
   modules: {
+   
     eventBus: {
       resolve: "@medusajs/event-bus-redis",
       options: {
@@ -40,6 +41,7 @@ module.exports = defineConfig({
         }
       }
     },
+   
     wishlist: {
       resolve: "./src/modules/wishlist",
       definition: {
