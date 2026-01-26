@@ -1,7 +1,0 @@
-# Ensure lockfiles stay LF so Yarn doesn't rewrite them on Linux CI
-yarn.lock text eol=lf
-
-# Keep config files consistent across platforms
-*.yml text eol=lf
-*.yaml text eol=lf
-*.json text eol=lf

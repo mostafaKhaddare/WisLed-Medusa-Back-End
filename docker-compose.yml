@@ -1,0 +1,44 @@
+services:
+  solace-pg:
+    container_name: solace-pg
+    restart: unless-stopped
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: medusa
+      POSTGRES_PASSWORD: medusa
+      POSTGRES_DB: medusa
+    volumes:
+      - medusa-data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+
+  solace-redis:
+    container_name: solace-redis
+    restart: unless-stopped
+    image: valkey/valkey:alpine
+    ports:
+      - "6379:6379"
+    expose:
+      - 6379
+
+  medusa:
+    profiles: ["full"]  # only when you run on profile "full"
+    build:
+      context: .
+    container_name: medusa
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      - solace-redis
+      - solace-pg
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+
+volumes:
+  medusa-data:
