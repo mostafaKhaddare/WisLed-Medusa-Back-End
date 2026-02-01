@@ -1,40 +1,37 @@
+version: "3.9"
+
 services:
-  solace-pg:
-    container_name: solace-pg
-    restart: unless-stopped
+  postgres:
+    container_name: medusa-pg
     image: postgres:15-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: medusa
       POSTGRES_PASSWORD: medusa
       POSTGRES_DB: medusa
     volumes:
-      - medusa-data:/var/lib/postgresql/data/
+      - medusa-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    expose:
-      - 5432
 
-  solace-redis:
-    container_name: solace-redis
+  redis:
+    container_name: medusa-redis
+    image: redis:7-alpine
     restart: unless-stopped
-    image: valkey/valkey:alpine
     ports:
       - "6379:6379"
-    expose:
-      - 6379
 
   medusa:
-    profiles: ["full"]  # only when you run on profile "full"
+    container_name: medusa
     build:
       context: .
-    container_name: medusa
     platform: linux/amd64
     restart: unless-stopped
     depends_on:
-      - solace-redis
-      - solace-pg
+      - redis
+      - postgres
     ports:
-      - 3000:3000
+      - "9000:9000" # matches Dockerfile
     env_file:
       - .env
     environment:

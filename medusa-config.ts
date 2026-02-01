@@ -1,6 +1,34 @@
-import { defineConfig, Modules } from "@medusajs/framework/utils";
+import dotenv from "dotenv"
+import { defineConfig, Modules } from "@medusajs/framework/utils"
 
-// 1. Your existing modules configuration
+// =======================
+// ENV LOADER (YOUR CODE)
+// =======================
+let ENV_FILE_NAME = ""
+
+switch (process.env.NODE_ENV) {
+  case "production":
+    ENV_FILE_NAME = ".env.production"
+    break
+  case "staging":
+    ENV_FILE_NAME = ".env.staging"
+    break
+  case "test":
+    ENV_FILE_NAME = ".env.test"
+    break
+  case "development":
+  default:
+    ENV_FILE_NAME = ".env"
+    break
+}
+
+try {
+  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME })
+} catch (e) {}
+
+// =======================
+// MODULES CONFIG (KEEP)
+// =======================
 const modules = {
   /* ---------- CACHING ---------- */
   [Modules.CACHING]: {
@@ -54,7 +82,7 @@ const modules = {
     },
   },
 
-  /* ---------- FILE STORAGE ---------- */
+  /* ---------- FILE STORAGE (DO SPACES / S3) ---------- */
   [Modules.FILE]: {
     resolve: "@medusajs/medusa/file",
     options: {
@@ -101,36 +129,39 @@ const modules = {
   /* ---------- CUSTOM MODULES ---------- */
   wishlist: {
     resolve: "./src/modules/wishlist",
-    definition: {
-      isQueryable: true,
-    },
+    definition: { isQueryable: true },
   },
 
   productMedia: {
     resolve: "./src/modules/product-media",
-    definition: {
-      isQueryable: true,
-    },
+    definition: { isQueryable: true },
   },
-};
+}
 
-// 2. The Final Export
+// =======================
+// FINAL EXPORT CONFIG
+// =======================
 export default defineConfig({
   projectConfig: {
-    databaseUrl: process.env.DATABASE_URL,
+    databaseUrl: process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default",
+
     http: {
-      storeCors: process.env.STORE_CORS,
-      adminCors: process.env.ADMIN_CORS,
+      storeCors: process.env.STORE_CORS || "http://localhost:8000",
+      adminCors: process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001",
       authCors: process.env.AUTH_CORS,
+
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
-  },
-  
-  // ✅ ADD ADMIN CONFIG HERE (Sibling to modules, not inside it)
-  admin: {
-    backendUrl: process.env.MEDUSA_BACKEND_URL,
+
+    redisUrl: process.env.REDIS_URL,
   },
 
-  modules: modules,
-});
+  // ADMIN CONFIG (YOUR REQUIREMENT)
+  admin: {
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
+    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+  },
+
+  modules,
+})
