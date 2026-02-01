@@ -1,28 +1,28 @@
-# Use Node 20 official image (includes Corepack)
+# Use Node 20 official slim image (has Corepack)
 FROM node:20-slim
 
 # Set working directory
 WORKDIR /app/medusa
 
-# Install python (needed by some packages)
+# Install python (needed for some Medusa deps)
 RUN apt-get update && apt-get install -y python3 python3-pip python-is-python3 && rm -rf /var/lib/apt/lists/*
 
-# Copy only package files first (Docker caching)
-COPY package.json package-lock.json yarn.lock ./
+# Copy only package files first for caching
+COPY package.json yarn.lock package-lock.json ./
 
-# Enable Corepack and install dependencies
+# Enable Corepack and install Yarn dependencies
 RUN corepack enable \
     && corepack prepare yarn@3.2.3 --activate \
     && yarn install --immutable
 
-# Copy rest of the code
+# Copy the rest of the code
 COPY . .
 
 # Build Medusa
 RUN yarn build
 
-# Expose default Medusa port
+# Expose Medusa default port
 EXPOSE 9000
 
-# Use a simple entrypoint script to run migrations then start
+# Run migrations then start Medusa
 CMD ["sh", "-c", "yarn db:migrate && yarn start"]
