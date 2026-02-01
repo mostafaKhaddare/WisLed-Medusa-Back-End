@@ -4,10 +4,13 @@ FROM node:20-slim
 # Set working directory
 WORKDIR /app/medusa
 
-# Install python (needed for some Medusa deps)
+# Install python (required by some Medusa dependencies)
 RUN apt-get update && apt-get install -y python3 python3-pip python-is-python3 && rm -rf /var/lib/apt/lists/*
 
-# Copy only package files first for caching
+# Install corepack (required for Yarn v3+)
+RUN npm install -g corepack
+
+# Copy package files first for caching
 COPY package.json yarn.lock package-lock.json ./
 
 # Enable Corepack and install Yarn dependencies
@@ -21,7 +24,7 @@ COPY . .
 # Build Medusa
 RUN yarn build
 
-# Expose Medusa default port
+# Expose default Medusa port
 EXPOSE 9000
 
 # Run migrations then start Medusa
