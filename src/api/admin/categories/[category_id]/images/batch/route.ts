@@ -14,7 +14,7 @@ export const UpdateCategoryImagesSchema = z.object({
       z.object({
         id: z.string(),
 
-        type: z.enum(["thumbnail", "image"]),
+        type: z.enum(["thumbnail", "image"]).optional(),
       })
     )
     .min(1, "At least one update is required"),

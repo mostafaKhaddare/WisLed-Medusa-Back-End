@@ -7,16 +7,16 @@ WORKDIR /app/medusa
 # Install python (required by some Medusa dependencies)
 RUN apt-get update && apt-get install -y python3 python3-pip python-is-python3 && rm -rf /var/lib/apt/lists/*
 
-# Install corepack (required for Yarn v3+)
-RUN npm install -g corepack
+# Install corepack globally and enable it
+RUN npm install -g corepack \
+    && corepack enable \
+    && corepack prepare yarn@3.2.3 --activate
 
 # Copy package files first for caching
 COPY package.json yarn.lock package-lock.json ./
 
-# Enable Corepack and install Yarn dependencies
-RUN corepack enable \
-    && corepack prepare yarn@3.2.3 --activate \
-    && yarn install --immutable
+# Install Yarn dependencies
+RUN yarn install --immutable
 
 # Copy the rest of the code
 COPY . .

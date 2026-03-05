@@ -19,14 +19,57 @@ export const updateCategoryImagesStep = createStep(
     const productMediaService: ProductMediaModuleService =
       container.resolve(PRODUCT_MEDIA_MODULE);
 
-    // Get previous data for the images being updated
-
+    // Get previous data for the images being updated (for compensation)
     const prevData = await productMediaService.listProductCategoryImages({
       id: input.updates.map((u) => u.id),
     });
 
-    // Apply the requested updates
+    // ── KEY FIX: demote existing thumbnails BEFORE promoting a new one ────────
+    // The DB has a unique partial index on (category_id, type) WHERE type='thumbnail'.
+    // Promoting an image to "thumbnail" while another record for the same
+    // category still holds type='thumbnail' triggers a constraint violation.
+    // We must demote ALL existing thumbnails for the affected categories first.
+    const thumbnailUpdates = input.updates.filter(
+      (u) => u.type === "thumbnail"
+    );
 
+    if (thumbnailUpdates.length > 0) {
+      // Figure out which categories are affected
+      const affectedImageIds = thumbnailUpdates.map((u) => u.id);
+
+      const affectedImages = await productMediaService.listProductCategoryImages(
+        { id: affectedImageIds }
+      );
+
+      const affectedCategoryIds = [...new Set(affectedImages.map((img) => img.category_id))];
+
+      if (affectedCategoryIds.length > 0) {
+        // Find existing thumbnails in those categories (excluding the ones
+        // we are about to promote, to avoid a no-op update on them)
+        const existingThumbnails =
+          await productMediaService.listProductCategoryImages({
+            type: "thumbnail",
+            category_id: affectedCategoryIds,
+          });
+
+        const idsToPromote = new Set(affectedImageIds);
+
+        const thumbnailsToDemote = existingThumbnails.filter(
+          (t) => !idsToPromote.has(t.id)
+        );
+
+        if (thumbnailsToDemote.length > 0) {
+          await productMediaService.updateProductCategoryImages(
+            thumbnailsToDemote.map((t) => ({
+              id: t.id,
+              type: "image" as const,
+            }))
+          );
+        }
+      }
+    }
+
+    // Apply the requested updates
     const updatedData = await productMediaService.updateProductCategoryImages(
       input.updates
     );
@@ -42,12 +85,10 @@ export const updateCategoryImagesStep = createStep(
     const productMediaService: ProductMediaModuleService =
       container.resolve(PRODUCT_MEDIA_MODULE);
 
-    // Revert all updates
-
+    // Revert all updates to their previous state
     await productMediaService.updateProductCategoryImages(
       compensationData.map((img) => ({
         id: img.id,
-
         type: img.type,
       }))
     );

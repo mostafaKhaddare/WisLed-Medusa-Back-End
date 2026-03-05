@@ -70,7 +70,6 @@ export const CategoryMediaModal = ({
     updateImagesMutation.isPending ||
     deleteImagesMutation.isPending;
 
-  // TODO add functions
   const resetModalState = () => {
     setUploadedFiles([]);
     setSelectedImageIds(new Set());
@@ -98,7 +97,6 @@ export const CategoryMediaModal = ({
     }
   };
 
-  // TODO handle upload file
   const handleUploadFile = (files: FileList | null) => {
     if (!files || files.length === 0) {
       return;
@@ -108,7 +106,12 @@ export const CategoryMediaModal = ({
 
     uploadFilesMutation.mutate(filesArray, {
       onSuccess: (data) => {
+        console.log("[CategoryMedia] Upload success:", data.files);
         setUploadedFiles((prev) => [...prev, ...data.files]);
+      },
+      onError: (error) => {
+        console.error("[CategoryMedia] Upload failed:", error);
+        toast.error("Failed to upload image. Please try again.");
       },
     });
 
@@ -116,6 +119,7 @@ export const CategoryMediaModal = ({
       fileInputRef.current.value = "";
     }
   };
+
   // handle image selection
   const handleImageSelection = (id: string, isUploaded: boolean = false) => {
     const itemId = isUploaded ? `uploaded:${id}` : id;
@@ -130,7 +134,8 @@ export const CategoryMediaModal = ({
 
     setSelectedImageIds(newSelected);
   };
-  //handle thumbnail image
+
+  // handle thumbnail image
   const handleSetAsThumbnail = () => {
     if (selectedImageIds.size !== 1) {
       return;
@@ -156,6 +161,7 @@ export const CategoryMediaModal = ({
 
     setSelectedImageIds(new Set());
   };
+
   // handle delete
   const handleDelete = () => {
     if (selectedImageIds.size === 0) {
@@ -204,10 +210,67 @@ export const CategoryMediaModal = ({
 
     setSelectedImageIds(new Set());
   };
-  // TODO handle save
+
+  /**
+   * Determine the correct type for a newly uploaded file.
+   *
+   * Priority order:
+   *  1. Explicitly set to "thumbnail" via "Set as thumbnail" action
+   *  2. If there are no existing images (not being deleted) AND this is the
+   *     first uploaded file → auto-assign "thumbnail"
+   *  3. If the existing thumbnail is being deleted and this is the only new
+   *     file → auto-assign "thumbnail" so there's always a thumbnail
+   *  4. Otherwise → "image"
+   */
+  const resolveUploadedFileType = (
+    file: UploadedFile,
+    index: number,
+    allUploadedFiles: UploadedFile[],
+    existingIdsToDelete: Set<string>
+  ): "thumbnail" | "image" => {
+    // Already explicitly marked as thumbnail
+    if (file.type === "thumbnail") return "thumbnail";
+
+    const uploadedId = `uploaded:${file.id}`;
+    if (currentThumbnailId === uploadedId) return "thumbnail";
+
+    // Determine if there will be any surviving existing images after save
+    const survivingExistingImages = existingImages.filter(
+      (img) => img.id && !existingIdsToDelete.has(img.id)
+    );
+
+    // If no surviving existing images and this is the first new file, make it thumbnail
+    if (survivingExistingImages.length === 0 && index === 0) {
+      return "thumbnail";
+    }
+
+    // If the current thumbnail is being deleted and this is the first new file, promote it
+    const existingThumbnail = existingImages.find(
+      (img) => img.type === "thumbnail"
+    );
+    const thumbnailIsBeingDeleted =
+      existingThumbnail?.id && existingIdsToDelete.has(existingThumbnail.id);
+
+    if (thumbnailIsBeingDeleted && index === 0) {
+      return "thumbnail";
+    }
+
+    return "image";
+  };
+
+  /**
+   * Save handler — runs operations **sequentially** to avoid race conditions:
+   *
+   *   1. Delete images marked for removal (await)
+   *   2. Create newly uploaded images (await)
+   *   3. Update thumbnail designation for existing images (await)
+   *
+   * Running all three in parallel with Promise.all caused the "update fails"
+   * issue because the DB could still have the old thumbnail row when the
+   * update arrived, leading to constraint violations or silent no-ops.
+   */
   const handleSave = async () => {
     const hasNewImages = uploadedFiles.length > 0;
-
     const hasImagesToDelete = imagesToDelete.size > 0;
 
     const initialThumbnail = existingImages.find(
@@ -220,73 +283,91 @@ export const CategoryMediaModal = ({
       currentThumbnailId !== initialThumbnail?.id;
 
     if (!hasNewImages && !hasImagesToDelete && !thumbnailChanged) {
+      console.log("[CategoryMedia] No changes detected, closing modal.");
       setOpen(false);
-
       return;
     }
 
+    console.log("[CategoryMedia] Starting save:", {
+      hasNewImages,
+      hasImagesToDelete,
+      thumbnailChanged,
+      uploadedFiles,
+      imagesToDelete: Array.from(imagesToDelete),
+      currentThumbnailId,
+    });
+
     try {
-      const operations: Array<Promise<unknown>> = [];
+      // ── Step 1: Delete existing images that were removed ──────────────────
+      if (hasImagesToDelete) {
+        const idsToDelete = Array.from(imagesToDelete);
+        console.log("[CategoryMedia] Deleting images:", idsToDelete);
 
-      if (hasNewImages) {
-        const imagesToCreate = uploadedFiles.map((file) => ({
-          url: file.url,
+        await deleteImagesMutation.mutateAsync(idsToDelete);
 
-          file_id: file.id,
-
-          type:
-            file.type ||
-            (currentThumbnailId === `uploaded:${file.id}`
-              ? "thumbnail"
-              : "image"),
-        }));
-
-        operations.push(createImagesMutation.mutateAsync(imagesToCreate));
+        console.log("[CategoryMedia] Delete complete.");
       }
 
-      // Update thumbnail if changed and it's not an uploaded file
+      // ── Step 2: Create newly uploaded images ──────────────────────────────
+      if (hasNewImages) {
+        const imagesToCreate = uploadedFiles.map((file, index) => ({
+          url: file.url,
+          file_id: file.id,
+          type: resolveUploadedFileType(
+            file,
+            index,
+            uploadedFiles,
+            imagesToDelete
+          ),
+        }));
 
+        console.log("[CategoryMedia] Creating images:", imagesToCreate);
+
+        await createImagesMutation.mutateAsync(imagesToCreate);
+
+        console.log("[CategoryMedia] Create complete.");
+      }
+
+      // ── Step 3: Update thumbnail designation for surviving existing images ─
       if (
         thumbnailChanged &&
         !(hasNewImages && currentThumbnailId?.startsWith("uploaded:"))
       ) {
         const updates = [
           {
-            id: currentThumbnailId,
-
+            id: currentThumbnailId!,
             type: "thumbnail" as const,
           },
         ];
 
-        operations.push(updateImagesMutation.mutateAsync(updates));
+        console.log("[CategoryMedia] Updating thumbnail:", updates);
+
+        await updateImagesMutation.mutateAsync(updates);
+
+        console.log("[CategoryMedia] Update complete.");
       }
 
-      if (hasImagesToDelete) {
-        const idsToDelete = Array.from(imagesToDelete);
-
-        operations.push(deleteImagesMutation.mutateAsync(idsToDelete));
-      }
-
-      await Promise.all(operations);
-
-      queryClient.invalidateQueries({
+      // ── Invalidate query cache ─────────────────────────────────────────────
+      await queryClient.invalidateQueries({
         queryKey: ["category-images", categoryId],
       });
 
       setOpen(false);
-
       resetModalState();
 
       toast.success("Category media saved successfully");
     } catch (error) {
-      toast.error("Failed to save changes");
+      console.error("[CategoryMedia] Save failed:", error);
+
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+
+      toast.error(`Failed to save changes: ${message}`);
     }
   };
 
-  // TODO render modal
   return (
     <>
-      {/* TODO show command bar */}
       <CommandBar open={selectedImageIds.size > 0}>
         <CommandBar.Bar>
           <CommandBar.Value>{selectedImageIds.size} selected</CommandBar.Value>
@@ -300,18 +381,13 @@ export const CategoryMediaModal = ({
             disabled={selectedImageIds.size !== 1}
           />
 
-          {/* TODO add delete command */}
-          <CommandBar open={selectedImageIds.size > 0}>
-            {/* ... */}
+          <CommandBar.Seperator />
 
-            <CommandBar.Seperator />
-
-            <CommandBar.Command
-              action={handleDelete}
-              label="Delete"
-              shortcut="d"
-            />
-          </CommandBar>
+          <CommandBar.Command
+            action={handleDelete}
+            label="Delete"
+            shortcut="d"
+          />
         </CommandBar.Bar>
       </CommandBar>
 

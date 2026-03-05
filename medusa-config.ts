@@ -1,167 +1,99 @@
-import dotenv from "dotenv"
-import { defineConfig, Modules } from "@medusajs/framework/utils"
+const path = require('path');
+const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
-// =======================
-// ENV LOADER (YOUR CODE)
-// =======================
-let ENV_FILE_NAME = ""
+loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
-switch (process.env.NODE_ENV) {
-  case "production":
-    ENV_FILE_NAME = ".env.production"
-    break
-  case "staging":
-    ENV_FILE_NAME = ".env.staging"
-    break
-  case "test":
-    ENV_FILE_NAME = ".env.test"
-    break
-  case "development":
-  default:
-    ENV_FILE_NAME = ".env"
-    break
+const dynamicModules = {};
+
+const stripeApiKey = process.env.STRIPE_API_KEY;
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+const isStripeConfigured = Boolean(stripeApiKey) && Boolean(stripeWebhookSecret);
+
+if (isStripeConfigured) {
+  console.log('Stripe API key and webhook secret found. Enabling payment module');
+  dynamicModules[Modules.PAYMENT] = {
+    resolve: '@medusajs/medusa/payment',
+    options: {
+      providers: [
+        {
+          // FIX: Correct package name (removed /medusa/)
+          resolve: '@medusajs/payment-stripe',
+          id: 'stripe',
+          options: {
+            apiKey: stripeApiKey,
+            webhookSecret: stripeWebhookSecret
+          }
+        }
+      ]
+    }
+  };
 }
 
-try {
-  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME })
-} catch (e) {}
+// Check if S3/DigitalOcean Spaces credentials are configured
+const doSpaceAccessKey = process.env.DO_SPACE_ACCESS_KEY;
+const doSpaceSecretKey = process.env.DO_SPACE_SECRET_KEY;
+const isS3Configured = Boolean(doSpaceAccessKey) && Boolean(doSpaceSecretKey);
 
-// =======================
-// MODULES CONFIG (KEEP)
-// =======================
-const modules = {
-  /* ---------- CACHING ---------- */
-  [Modules.CACHING]: {
-    resolve: "@medusajs/medusa/caching",
+if (isS3Configured) {
+  console.log('DigitalOcean Spaces credentials found. Enabling S3 file storage');
+  dynamicModules[Modules.FILE] = {
+    resolve: '@medusajs/medusa/file',
     options: {
       providers: [
         {
-          resolve: "@medusajs/caching-redis",
-          id: "caching-redis",
-          is_default: true,
-          options: {
-            redisUrl: process.env.CACHE_REDIS_URL || process.env.REDIS_URL,
-          },
-        },
-      ],
-    },
-  },
-
-  /* ---------- EVENT BUS ---------- */
-  [Modules.EVENT_BUS]: {
-    resolve: "@medusajs/medusa/event-bus-redis",
-    options: {
-      redisUrl: process.env.REDIS_URL,
-    },
-  },
-
-  /* ---------- WORKFLOW ENGINE ---------- */
-  [Modules.WORKFLOW_ENGINE]: {
-    resolve: "@medusajs/medusa/workflow-engine-redis",
-    options: {
-      redis: {
-        redisUrl: process.env.REDIS_URL,
-      },
-    },
-  },
-
-  /* ---------- LOCKING ---------- */
-  [Modules.LOCKING]: {
-    resolve: "@medusajs/medusa/locking",
-    options: {
-      providers: [
-        {
-          resolve: "@medusajs/medusa/locking-redis",
-          id: "locking-redis",
-          is_default: true,
-          options: {
-            redisUrl: process.env.LOCKING_REDIS_URL || process.env.REDIS_URL,
-          },
-        },
-      ],
-    },
-  },
-
-  /* ---------- FILE STORAGE (DO SPACES / S3) ---------- */
-  [Modules.FILE]: {
-    resolve: "@medusajs/medusa/file",
-    options: {
-      providers: [
-        {
-          resolve: "@medusajs/file-s3",
-          id: "s3",
+          resolve: '@medusajs/file-s3',
+          id: 's3',
           options: {
             file_url: process.env.DO_SPACE_URL,
-            access_key_id: process.env.DO_SPACE_ACCESS_KEY,
-            secret_access_key: process.env.DO_SPACE_SECRET_KEY,
+            access_key_id: doSpaceAccessKey,
+            secret_access_key: doSpaceSecretKey,
             region: process.env.DO_SPACE_REGION,
             bucket: process.env.DO_SPACE_BUCKET,
-            endpoint: process.env.DO_SPACE_ENDPOINT,
-          },
-        },
-      ],
-    },
-  },
-
-  /* ---------- NOTIFICATIONS ---------- */
-  [Modules.NOTIFICATION]: {
-    resolve: "@medusajs/medusa/notification",
-    options: {
-      providers: [
-        {
-          resolve: "./src/modules/resend",
-          id: "resend",
-          options: {
-            channels: ["email"],
-            api_key: process.env.RESEND_API_KEY,
-            from: process.env.RESEND_FROM_EMAIL,
-          },
-        },
-      ],
-    },
-  },
-
-  /* ---------- SEARCH / INDEX ---------- */
-  [Modules.INDEX]: {
-    resolve: "@medusajs/index",
-  },
-
-  /* ---------- CUSTOM MODULES ---------- */
-  wishlist: {
-    resolve: "./src/modules/wishlist",
-    definition: { isQueryable: true },
-  },
-
-  productMedia: {
-    resolve: "./src/modules/product-media",
-    definition: { isQueryable: true },
-  },
+            endpoint: process.env.DO_SPACE_ENDPOINT
+          }
+        }
+      ]
+    }
+  };
+} else {
+  console.log('S3 credentials not found. File storage will use default local storage.');
 }
 
-// =======================
-// FINAL EXPORT CONFIG
-// =======================
-export default defineConfig({
-  projectConfig: {
-    databaseUrl: process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default",
-
-    http: {
-      storeCors: process.env.STORE_CORS || "http://localhost:8000",
-      adminCors: process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001",
-      authCors: process.env.AUTH_CORS,
-
-      jwtSecret: process.env.JWT_SECRET || "supersecret",
-      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
-    },
-
-    redisUrl: process.env.REDIS_URL,
+const modules = {
+  // FIX: Added path.resolve to ensure the folder is found
+  productMedia: {
+    resolve: path.resolve(__dirname, "./src/modules/product-media"),
+    definition: {
+      isQueryable: true
+    }
   },
+  wishlist: {
+    resolve: path.resolve(__dirname, "./src/modules/wishlist"),
+    definition: {
+      isQueryable: true
+    }
+  },
+  // If you still need the Notification (Resend) module, paste it back here
+};
 
-  // ADMIN CONFIG (YOUR REQUIREMENT)
+module.exports = defineConfig({
   admin: {
     backendUrl: process.env.MEDUSA_BACKEND_URL,
-    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    disable: process.env.DISABLE_MEDUSA_ADMIN === 'true'
   },
-
-  modules,
-})
+  projectConfig: {
+    databaseUrl: process.env.DATABASE_URL,
+    http: {
+      storeCors: process.env.STORE_CORS,
+      adminCors: process.env.ADMIN_CORS,
+      authCors: process.env.AUTH_CORS,
+      jwtSecret: process.env.JWT_SECRET || 'supersecret',
+      cookieSecret: process.env.COOKIE_SECRET || 'supersecret'
+    },
+  },
+  modules: {
+    ...dynamicModules,
+    ...modules
+  },
+});
