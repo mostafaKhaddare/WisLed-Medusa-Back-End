@@ -22,8 +22,8 @@ RUN corepack enable
 # We also copy .yarnrc.yml to ensure Yarn Berry config is respected
 COPY package.json yarn.lock .yarnrc.yml ./
 
-# If you have a .yarn folder (like .yarn/releases), uncomment the next line to copy it:
-# COPY .yarn ./.yarn
+# Copy the .yarn folder which contains the Yarn Berry executable (yarn-4.13.0.cjs)
+COPY .yarn ./.yarn
 
 # Install all dependencies precisely matching yarn.lock
 RUN yarn install --immutable
@@ -38,8 +38,9 @@ RUN yarn build
 WORKDIR /app/medusa/.medusa/server
 
 # In Medusa v2, the compiled server still needs its own dependencies.
-# We copy the lockfile and config into the build directory too.
+# We copy the lockfile, config, and .yarn runtime into the build directory too.
 COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
 
 # Install production dependencies inside the build output directory
 RUN yarn workspaces focus --production || yarn install --immutable
