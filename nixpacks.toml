@@ -1,0 +1,15 @@
+# nixpacks.toml — Railway build configuration for WisLed Medusa v2 Backend
+# https://nixpacks.com/docs/configuration/file
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-10_x"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+# Medusa build outputs to .medusa/server — run migrations then start
+cmd = "cd .medusa/server && npm install --production && npx medusa db:migrate && npx medusa start"
