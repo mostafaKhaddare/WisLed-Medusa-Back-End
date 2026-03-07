@@ -13,6 +13,14 @@ const cacheRedisUrl = process.env.CACHE_REDIS_URL || redisUrl;
 const lockingRedisUrl = process.env.LOCKING_REDIS_URL || redisUrl;
 
 // ---------------------------------------------------------------------------
+// Postgres URL — handle strict SSL mode for Medusa Cloud to silence warnings
+// ---------------------------------------------------------------------------
+let dbUrl = process.env.DATABASE_URL;
+if (dbUrl && dbUrl.includes('sslmode=require')) {
+  dbUrl = dbUrl.replace('sslmode=require', 'sslmode=verify-full');
+}
+
+// ---------------------------------------------------------------------------
 // Stripe Payment Module (conditional)
 // ---------------------------------------------------------------------------
 const stripeApiKey = process.env.STRIPE_API_KEY;
@@ -165,7 +173,7 @@ module.exports = defineConfig({
     disable: process.env.DISABLE_MEDUSA_ADMIN === 'true',
   },
   projectConfig: {
-    databaseUrl: process.env.DATABASE_URL,
+    databaseUrl: dbUrl,
     // Required for session storage, event bus fallback, etc.
     redisUrl: process.env.REDIS_URL,
     // Controls deployment mode:
