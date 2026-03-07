@@ -1,15 +1,17 @@
 # nixpacks.toml — Railway build configuration for WisLed Medusa v2 Backend
+# NOTE: Railway uses the Dockerfile if one is present. This file is a fallback
+# or can be used by enabling "Nixpacks" build method in Railway project settings.
 # https://nixpacks.com/docs/configuration/file
 
 [phases.setup]
-nixPkgs = ["nodejs_20", "npm-10_x"]
+nixPkgs = ["nodejs_20"]
 
 [phases.install]
 cmds = ["npm install"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["npm run build", "cd .medusa/server && npm install --production"]
 
 [start]
-# Medusa build outputs to .medusa/server — run migrations then start
-cmd = "cd .medusa/server && npm install --production && npx medusa db:migrate && npx medusa start"
+# Run migrations then start — Medusa reads PORT from env (Railway injects it)
+cmd = "cd .medusa/server && npx medusa db:migrate && npx medusa start"
