@@ -12,7 +12,6 @@
     "medusa"
   ],
   "scripts": {
-    "preinstall": "corepack enable && corepack prepare yarn@3.2.3 --activate",
     "dev": "medusa develop",
     "predeploy": "medusa db:migrate",
     "build": "medusa build",
@@ -23,7 +22,7 @@
     "db:migrate": "medusa db:migrate",
     "db:rollback": "medusa db:rollback",
     "db:sync-links": "medusa db:sync-links",
-    "db:init": "yarn db:migrate && yarn db:sync-links && yarn seed",
+    "db:init": "npm run db:migrate && npm run db:sync-links && npm run seed",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --runInBand --forceExit",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --runInBand --forceExit",
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --runInBand --forceExit"
@@ -57,5 +56,6 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "packageManager": "npm@10.9.2"
 }
