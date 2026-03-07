@@ -26,8 +26,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 # COPY .yarn ./.yarn
 
 # Install all dependencies precisely matching yarn.lock
-RUN --mount=type=cache,target=/root/.yarn/berry/cache \
-    yarn install --immutable
+RUN yarn install --immutable
 
 # Copy the rest of the source code
 COPY . .
@@ -43,8 +42,7 @@ WORKDIR /app/medusa/.medusa/server
 COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install production dependencies inside the build output directory
-RUN --mount=type=cache,target=/root/.yarn/berry/cache \
-    yarn workspaces focus --production || yarn install --immutable
+RUN yarn workspaces focus --production || yarn install --immutable
 
 # Expose the default Medusa port
 EXPOSE 9000
