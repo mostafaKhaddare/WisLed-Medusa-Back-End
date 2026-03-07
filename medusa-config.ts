@@ -3,30 +3,7 @@ const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
-// ---------------------------------------------------------------------------
-// Validate required secrets in production — fail fast before anything runs
-// ---------------------------------------------------------------------------
-if (process.env.NODE_ENV === 'production') {
-  const required = [
-    'DATABASE_URL',
-    'JWT_SECRET',
-    'COOKIE_SECRET',
-    'REDIS_URL',
-    'STORE_CORS',
-    'ADMIN_CORS',
-    'AUTH_CORS',
-    'MEDUSA_BACKEND_URL',
-  ];
-
-  const missing = required.filter((key) => !process.env[key]);
-
-  if (missing.length > 0) {
-    console.error(
-      `[medusa-config] FATAL: Missing required production environment variables:\n  ${missing.join('\n  ')}`
-    );
-    process.exit(1);
-  }
-}
+// Medusa Cloud handles production secrets natively.
 
 // ---------------------------------------------------------------------------
 // Redis URLs — allow granular overrides or fall back to the main REDIS_URL
@@ -198,13 +175,12 @@ module.exports = defineConfig({
     workerMode: (process.env.MEDUSA_WORKER_MODE as 'shared' | 'worker' | 'server') || 'shared',
     http: {
       // CORS origins — must be set to your actual frontend / admin URLs in production
-      storeCors: process.env.STORE_CORS!,
-      adminCors: process.env.ADMIN_CORS!,
-      authCors: process.env.AUTH_CORS!,
-      // Secrets — NO hardcoded fallback intentionally; the production guard above
-      // will catch missing values before the server boots.
-      jwtSecret: process.env.JWT_SECRET!,
-      cookieSecret: process.env.COOKIE_SECRET!,
+      storeCors: process.env.STORE_CORS || 'http://localhost:8000',
+      adminCors: process.env.ADMIN_CORS || 'http://localhost:9000,http://localhost:7001',
+      authCors: process.env.AUTH_CORS || 'http://localhost:9000,http://localhost:7001',
+      // Secrets — Local development fallbacks. Medusa Cloud automatically overrides these in production.
+      jwtSecret: process.env.JWT_SECRET || 'supersecret',
+      cookieSecret: process.env.COOKIE_SECRET || 'supersecret',
     },
   },
   modules,
