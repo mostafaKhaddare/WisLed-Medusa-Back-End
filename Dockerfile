@@ -1,6 +1,6 @@
 # ============================================================
 # WisLed Medusa v2 Backend — Production Dockerfile
-# Uses npm (not Yarn) to avoid yarn.lock immutability issues.
+# Configured correctly for Yarn Berry (v3+) with Corepack
 # ============================================================
 
 FROM node:20-slim
@@ -15,28 +15,38 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app/medusa
 
-# Copy package manifests first (for Docker layer caching)
-COPY package.json package-lock.json ./
+# Prepare Corepack for Yarn Berry
+RUN corepack enable
 
-# Install all dependencies (including devDeps needed for build)
-RUN npm install
+# Copy package manifests AND lockfile first (for Docker layer caching)
+# We also copy .yarnrc.yml to ensure Yarn Berry config is respected
+COPY package.json yarn.lock .yarnrc.yml ./
+
+# If you have a .yarn folder (like .yarn/releases), uncomment the next line to copy it:
+# COPY .yarn ./.yarn
+
+# Install all dependencies precisely matching yarn.lock
+RUN --mount=type=cache,target=/root/.yarn/berry/cache \
+    yarn install --immutable
 
 # Copy the rest of the source code
 COPY . .
 
 # Build Medusa (outputs to .medusa/server)
-RUN npm run build
+RUN yarn build
 
 # ── Production runtime ─────────────────────────────────────
-# Medusa's build output lives in .medusa/server.
-# We install only production deps there, then run migrations + start.
-
 WORKDIR /app/medusa/.medusa/server
 
-# Install production dependencies inside the build output directory
-RUN npm install --production
+# In Medusa v2, the compiled server still needs its own dependencies.
+# We copy the lockfile and config into the build directory too.
+COPY package.json yarn.lock .yarnrc.yml ./
 
-# Expose the default Medusa port (Railway overrides via $PORT env var)
+# Install production dependencies inside the build output directory
+RUN --mount=type=cache,target=/root/.yarn/berry/cache \
+    yarn workspaces focus --production || yarn install --immutable
+
+# Expose the default Medusa port
 EXPOSE 9000
 
 # Run DB migrations then start the server

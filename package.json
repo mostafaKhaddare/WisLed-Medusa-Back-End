@@ -34,6 +34,8 @@
     "@medusajs/index": "2.12.5",
     "@medusajs/medusa": "2.12.5",
     "@react-email/components": "1.0.4",
+    "awilix": "^13.0.3",
+    "express": "^5.2.1",
     "pg": "^8.13.0",
     "resend": "^6.7.0"
   },
@@ -41,6 +43,7 @@
     "@medusajs/test-utils": "2.12.5",
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
+    "@types/express": "^5",
     "@types/jest": "^29.5.13",
     "@types/node": "^20.12.11",
     "@types/prop-types": "^15.7.15",
@@ -48,7 +51,7 @@
     "@types/react-dom": "^18.2.25",
     "jest": "^29.7.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "vite": "^5.4.14",
@@ -57,5 +60,5 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "npm@10.9.2"
+  "packageManager": "yarn@4.13.0"
 }
