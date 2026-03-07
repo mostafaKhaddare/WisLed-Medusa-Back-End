@@ -2801,6 +2801,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@medusajs/icons@npm:2.13.3, @medusajs/icons@npm:^2.13.3":
+  version: 2.13.3
+  resolution: "@medusajs/icons@npm:2.13.3"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/2a4ed01c990288ecbee03121e79b4f2e79b2aa65cc284e60e4d63b24aea93fb1921b193f7969aaf30ff7b7abcd91d7e76804bd9aa9cab4723358e3943ec7d2b8
+  languageName: node
+  linkType: hard
+
 "@medusajs/index@npm:2.12.5":
   version: 2.12.5
   resolution: "@medusajs/index@npm:2.12.5"
@@ -3211,6 +3220,36 @@ __metadata:
     react: ^18.3.1
     react-dom: ^18.3.1
   checksum: 10c0/921f23b1bba2b2aaf8005330d9a727f21edf8591a451e230ffe1c33ef962b7917159141d49edb416d1a0cfd126c6797c46aabf7154aff3a765a3fb8cc899e022
+  languageName: node
+  linkType: hard
+
+"@medusajs/ui@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "@medusajs/ui@npm:4.1.3"
+  dependencies:
+    "@dnd-kit/core": "npm:^6.1.0"
+    "@dnd-kit/sortable": "npm:^8.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    "@medusajs/icons": "npm:2.13.3"
+    "@radix-ui/react-dialog": "npm:1.1.4"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.4"
+    "@tanstack/react-table": "npm:8.20.5"
+    clsx: "npm:^1.2.1"
+    copy-to-clipboard: "npm:^3.3.3"
+    cva: "npm:1.0.0-beta.1"
+    lodash.isequal: "npm:^4.5.0"
+    prism-react-renderer: "npm:^2.0.6"
+    prismjs: "npm:^1.30.0"
+    radix-ui: "npm:1.1.2"
+    react-aria: "npm:^3.33.1"
+    react-currency-input-field: "npm:^3.6.11"
+    react-stately: "npm:^3.31.1"
+    sonner: "npm:^1.5.0"
+    tailwind-merge: "npm:^2.2.1"
+  peerDependencies:
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  checksum: 10c0/f428320e1f1a9964ea37eb683d9b657b99bb1a510f6acd7040eb8a5fc99e4fcf927486fb6e51c5dc994913b7661b4bff9f5cc79252b8f4d38da4b8460a0c7526
   languageName: node
   linkType: hard
 
@@ -9446,9 +9485,11 @@ __metadata:
     "@medusajs/admin-sdk": "npm:2.12.5"
     "@medusajs/cli": "npm:2.12.5"
     "@medusajs/framework": "npm:2.12.5"
+    "@medusajs/icons": "npm:^2.13.3"
     "@medusajs/index": "npm:2.12.5"
     "@medusajs/medusa": "npm:2.12.5"
     "@medusajs/test-utils": "npm:2.12.5"
+    "@medusajs/ui": "npm:^4.1.3"
     "@react-email/components": "npm:1.0.4"
     "@swc/core": "npm:^1.7.28"
     "@swc/jest": "npm:^0.2.36"
@@ -9466,7 +9507,9 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^19.2.4"
     react-i18next: "npm:^16.5.6"
+    react-router-dom: "npm:^7.13.1"
     resend: "npm:^6.7.0"
+    tailwindcss: "npm:^4.2.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
     vite: "npm:^5.4.14"
@@ -10347,6 +10390,13 @@ __metadata:
   version: 0.7.2
   resolution: "cookie@npm:0.7.2"
   checksum: 10c0/9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^1.0.1":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: 10c0/79c4ddc0fcad9c4f045f826f42edf54bcc921a29586a4558b0898277fa89fb47be95bc384c2253f493af7b29500c830da28341274527328f18eba9f58afa112c
   languageName: node
   linkType: hard
 
@@ -15289,6 +15339,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^7.13.1":
+  version: 7.13.1
+  resolution: "react-router-dom@npm:7.13.1"
+  dependencies:
+    react-router: "npm:7.13.1"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/2b8ed9dc753f1f7be599a53a00900df04e2b4d1186b0a4d63004eebb2250cd78cd6837ff15fcada5f88d53ad127fff0d1de31468715dcd6dd79dad8cfa8414e9
+  languageName: node
+  linkType: hard
+
 "react-router@npm:6.20.1":
   version: 6.20.1
   resolution: "react-router@npm:6.20.1"
@@ -15297,6 +15359,22 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/5249f42048633fef42361e08b6fb879e6a575415ac3068a0805ae5464fec998a3149ca262cc1939ae8f4607ee24caa6ec0623c0fef702f1d323faba4a5f87d53
+  languageName: node
+  linkType: hard
+
+"react-router@npm:7.13.1":
+  version: 7.13.1
+  resolution: "react-router@npm:7.13.1"
+  dependencies:
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10c0/a64c645cede74251f21483fbfad740b36dc5133522d6f53f12317a873a22865fce659d4c2377d5e19c912f85c7b12b88224a2c70d8f70c082496b569cc4abc31
   languageName: node
   linkType: hard
 
@@ -15875,6 +15953,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.2
+  resolution: "set-cookie-parser@npm:2.7.2"
+  checksum: 10c0/4381a9eb7ee951dfe393fe7aacf76b9a3b4e93a684d2162ab35594fa4053cc82a4d7d7582bf397718012c9adcf839b8cd8f57c6c42901ea9effe33c752da4a45
+  languageName: node
+  linkType: hard
+
 "setimmediate@npm:^1.0.5":
   version: 1.0.5
   resolution: "setimmediate@npm:1.0.5"
@@ -16425,6 +16510,13 @@ __metadata:
   version: 4.1.18
   resolution: "tailwindcss@npm:4.1.18"
   checksum: 10c0/c79263cea0b2c577859b02f28284caa4eb3844e4d0f563686726ca97817c045c5c395a55bc776daaa351ba9e4aefa9a75bfbb43c22d86f3c573eecc2b87d6bf1
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "tailwindcss@npm:4.2.1"
+  checksum: 10c0/482d734b582e9da509042ff59c1d7564d99e39e238c50ae907c20fa56177a8a00c3902f6971329971bd6a1c5357026ac76a849b8f2c69c94f0f59be99530ba54
   languageName: node
   linkType: hard
 
