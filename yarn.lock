@@ -1155,7 +1155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.22.5, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.8, @babel/runtime@npm:^7.26.10":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.22.5, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.8, @babel/runtime@npm:^7.26.10, @babel/runtime@npm:^7.28.4":
   version: 7.28.6
   resolution: "@babel/runtime@npm:7.28.6"
   checksum: 10c0/358cf2429992ac1c466df1a21c1601d595c46930a13c1d4662fde908d44ee78ec3c183aaff513ecb01ef8c55c3624afe0309eeeb34715672dbfadb7feedb2c0d
@@ -9460,10 +9460,12 @@ __metadata:
     "@types/react-dom": "npm:^18.2.25"
     awilix: "npm:^13.0.3"
     express: "npm:^5.2.1"
+    i18next: "npm:^25.8.14"
     jest: "npm:^29.7.0"
     pg: "npm:^8.13.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^19.2.4"
+    react-i18next: "npm:^16.5.6"
     resend: "npm:^6.7.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
@@ -11910,6 +11912,20 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
   checksum: 10c0/66f166bebbde565d4e0ed98b0f046f49d97c591fa8e4919bd9badfb6be3b1057ec137b9332beb4835b2d6714af243726dc3996d60f54949cfd23c839b0f8a3b6
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^25.8.14":
+  version: 25.8.14
+  resolution: "i18next@npm:25.8.14"
+  dependencies:
+    "@babel/runtime": "npm:^7.28.4"
+  peerDependencies:
+    typescript: ^5
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1c736a48ab66c0e1b8094d4359d7864efd77bb0086b37021b0031ed76cfbe595c3c1ea2664b80589f4e5a5e61a94026959ce98218785db61781dce26d8595500
   languageName: node
   linkType: hard
 
@@ -15156,6 +15172,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-i18next@npm:^16.5.6":
+  version: 16.5.6
+  resolution: "react-i18next@npm:16.5.6"
+  dependencies:
+    "@babel/runtime": "npm:^7.28.4"
+    html-parse-stringify: "npm:^3.0.1"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    i18next: ">= 25.6.2"
+    react: ">= 16.8.0"
+    typescript: ^5
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/6bc70721c9a8d1e74af6e4a2d9123be099265c6a0d3fce35fe6f19b1484f3b0d5abf635d22115d5930d80574aa9612d5da41c5a829471e4697cbe99bcd83ed23
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
@@ -16889,7 +16927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.4.0":
+"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.4.0, use-sync-external-store@npm:^1.6.0":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
