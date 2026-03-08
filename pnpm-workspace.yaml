@@ -1,0 +1,7 @@
+# pnpm-workspace.yaml  
+onlyBuiltDependencies:
+  - "@swc/core"
+  - esbuild
+  - "@medusajs/telemetry"
+  - msgpackr-extract
+  - protobufjs
