@@ -6,8 +6,8 @@ COPY . .
 
 RUN apt-get update && apt-get install -y python3 python3-pip python-is-python3
 
-RUN yarn
+RUN npm install --legacy-peer-deps
 
-RUN yarn build
+RUN npm run build
 
-CMD yarn db:migrate && yarn start
+CMD npm run db:migrate && npm run start
