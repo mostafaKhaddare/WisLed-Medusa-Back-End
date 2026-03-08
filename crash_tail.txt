@@ -1,0 +1,50 @@
+﻿(node:net:1555:16)
+    at TCPConnectWrap.callbac
+kTrampoline (node:internal/as
+ync_hooks:128:17)
+[33mwarn[39m:    Redis cache connection closed
+[32minfo[39m:    Redis cache attempting to reconnect...
+[31merror[39m:   Error starting server
+[31merror[39m:   Could not find index.html in the admin build directory. Make sure to run 'medusa build' before starting the server.
+Error: Could not find 
+index.html in the admin 
+build directory. Make sure 
+to run 'medusa build' before 
+starting the server.
+    at serve (C:\mostafa\PROJ
+ECTS\WisLed\WisLed-Medusa-Bac
+k-End\node_modules\@medusajs\
+admin-bundler\dist\index.js:1
+616:11)
+    at serveProductionBuild (
+C:\mostafa\PROJECTS\WisLed\Wi
+sLed-Medusa-Back-End\node_mod
+ules\@medusajs\medusa\src\loa
+ders\admin.ts:90:28)
+    at async 
+Promise.allSettled (index 1)
+    at async promiseAll (C:\m
+ostafa\PROJECTS\WisLed\WisLed
+-Medusa-Back-End\node_modules
+\@medusajs\utils\src\common\p
+romise-all.ts:27:18)
+    at async loadEntrypoints 
+(C:\mostafa\PROJECTS\WisLed\W
+isLed-Medusa-Back-End\node_mo
+dules\@medusajs\medusa\src\lo
+aders\index.ts:117:26)
+    at async exports.default 
+(C:\mostafa\PROJECTS\WisLed\W
+isLed-Medusa-Back-End\node_mo
+dules\@medusajs\medusa\src\lo
+aders\index.ts:213:7)
+    at async internalStart (C
+:\mostafa\PROJECTS\WisLed\Wis
+Led-Medusa-Back-End\node_modu
+les\@medusajs\medusa\src\comm
+ands\start.ts:271:59)
+    at async start (C:\mostaf
+a\PROJECTS\WisLed\WisLed-Medu
+sa-Back-End\node_modules\@med
+usajs\medusa\src\commands\sta
+rt.ts:415:12)

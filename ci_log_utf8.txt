@@ -1,0 +1,305 @@
+﻿npm : npm warn ERESOLVE 
+overriding peer dependency
+At line:1 char:1
++ npm ci --no-audit > 
+ci_log.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (npm war  
+  n ERESOL...peer dependen   
+ cy:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+npm warn While resolving: 
+@medusajs/draft-order@2.12.5
+npm warn Found: 
+@medusajs/icons@2.13.3
+npm warn 
+node_modules/@medusajs/icons
+npm warn   
+@medusajs/icons@"^2.13.3" 
+from the root project
+npm warn   1 more 
+(@medusajs/ui)
+npm warn
+npm warn Could not resolve 
+dependency:
+npm warn peerOptional 
+@medusajs/icons@"2.12.5" 
+from 
+@medusajs/draft-order@2.12.5
+npm warn node_modules/@medusa
+js/draft-order
+npm warn   @medusajs/draft-or
+der@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn   
+node_modules/@medusajs/medusa
+npm warn
+npm warn Conflicting peer 
+dependency: 
+@medusajs/icons@2.12.5
+npm warn 
+node_modules/@medusajs/icons
+npm warn   peerOptional 
+@medusajs/icons@"2.12.5" 
+from 
+@medusajs/draft-order@2.12.5
+npm warn   node_modules/@medu
+sajs/draft-order
+npm warn     @medusajs/draft-
+order@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn     
+node_modules/@medusajs/medusa
+npm warn ERESOLVE overriding 
+peer dependency
+npm warn While resolving: 
+@medusajs/draft-order@2.12.5
+npm warn Found: 
+@medusajs/ui@4.1.3
+npm warn 
+node_modules/@medusajs/ui
+npm warn   
+@medusajs/ui@"^4.1.3" from 
+the root project
+npm warn
+npm warn Could not resolve 
+dependency:
+npm warn peerOptional 
+@medusajs/ui@"4.0.33" from 
+@medusajs/draft-order@2.12.5
+npm warn node_modules/@medusa
+js/draft-order
+npm warn   @medusajs/draft-or
+der@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn   
+node_modules/@medusajs/medusa
+npm warn
+npm warn Conflicting peer 
+dependency: 
+@medusajs/ui@4.0.33
+npm warn 
+node_modules/@medusajs/ui
+npm warn   peerOptional 
+@medusajs/ui@"4.0.33" from 
+@medusajs/draft-order@2.12.5
+npm warn   node_modules/@medu
+sajs/draft-order
+npm warn     @medusajs/draft-
+order@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn     
+node_modules/@medusajs/medusa
+npm warn ERESOLVE overriding 
+peer dependency
+npm warn While resolving: 
+@medusajs/draft-order@2.12.5
+npm warn Found: 
+react-dom@19.2.4
+npm warn 
+node_modules/react-dom
+npm warn   dev 
+react-dom@"^19.2.4" from the 
+root project
+npm warn   103 more 
+(@ariakit/react, 
+@ariakit/react-core, 
+@dnd-kit/core, ...)
+npm warn
+npm warn Could not resolve 
+dependency:
+npm warn peerOptional 
+react-dom@"^18.3.1" from 
+@medusajs/draft-order@2.12.5
+npm warn node_modules/@medusa
+js/draft-order
+npm warn   @medusajs/draft-or
+der@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn   
+node_modules/@medusajs/medusa
+npm warn
+npm warn Conflicting peer 
+dependency: react-dom@18.3.1
+npm warn 
+node_modules/react-dom
+npm warn   peerOptional 
+react-dom@"^18.3.1" from 
+@medusajs/draft-order@2.12.5
+npm warn   node_modules/@medu
+sajs/draft-order
+npm warn     @medusajs/draft-
+order@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn     
+node_modules/@medusajs/medusa
+npm warn ERESOLVE overriding 
+peer dependency
+npm warn While resolving: 
+@medusajs/draft-order@2.12.5
+npm warn Found: 
+react-router-dom@7.13.1
+npm warn 
+node_modules/react-router-dom
+npm warn   
+react-router-dom@"^7.13.1" 
+from the root project
+npm warn
+npm warn Could not resolve 
+dependency:
+npm warn peerOptional 
+react-router-dom@"6.20.1" 
+from 
+@medusajs/draft-order@2.12.5
+npm warn node_modules/@medusa
+js/draft-order
+npm warn   @medusajs/draft-or
+der@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn   
+node_modules/@medusajs/medusa
+npm warn
+npm warn Conflicting peer 
+dependency: 
+react-router-dom@6.20.1
+npm warn 
+node_modules/react-router-dom
+npm warn   peerOptional 
+react-router-dom@"6.20.1" 
+from 
+@medusajs/draft-order@2.12.5
+npm warn   node_modules/@medu
+sajs/draft-order
+npm warn     @medusajs/draft-
+order@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm warn     
+node_modules/@medusajs/medusa
+npm error code ERESOLVE
+npm error ERESOLVE could not 
+resolve
+npm error
+npm error While resolving: 
+@medusajs/medusa@2.12.5
+npm error Found: 
+react-dom@19.2.4
+npm error 
+node_modules/react-dom
+npm error   dev 
+react-dom@"^19.2.4" from the 
+root project
+npm error   peer 
+react-dom@"^17.0.0 || 
+^18.0.0 || ^19.0.0" from 
+@ariakit/react@0.4.22
+npm error   
+node_modules/@ariakit/react
+npm error     
+@ariakit/react@"^0.4.15" 
+from 
+@medusajs/dashboard@2.12.5
+npm error     node_modules/@m
+edusajs/dashboard
+npm error       
+@medusajs/dashboard@"2.12.5" 
+from @medusajs/admin-bundler@
+2.12.5
+npm error       node_modules/
+@medusajs/admin-bundler
+npm error         @medusajs/a
+dmin-bundler@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm error         
+node_modules/@medusajs/medusa
+npm error     
+@ariakit/react@"^0.4.15" 
+from 
+@medusajs/draft-order@2.12.5
+npm error     node_modules/@m
+edusajs/draft-order
+npm error       @medusajs/dra
+ft-order@"2.12.5" from 
+@medusajs/medusa@2.12.5
+npm error       
+node_modules/@medusajs/medusa
+npm error         
+@medusajs/medusa@"2.12.5" 
+from the root project
+npm error         1 more 
+(@medusajs/test-utils)
+npm error   102 more 
+(@ariakit/react-core, 
+@dnd-kit/core, ...)
+npm error
+npm error Could not resolve 
+dependency:
+npm error peerOptional 
+react-dom@"^18.3.1" from 
+@medusajs/medusa@2.12.5
+npm error 
+node_modules/@medusajs/medusa
+npm error   
+@medusajs/medusa@"2.12.5" 
+from the root project
+npm error   peerOptional 
+@medusajs/medusa@"2.12.5" 
+from 
+@medusajs/test-utils@2.12.5
+npm error   node_modules/@med
+usajs/test-utils
+npm error     dev @medusajs/t
+est-utils@"2.12.5" from the 
+root project
+npm error     1 more 
+(@medusajs/draft-order)
+npm error
+npm error Conflicting peer 
+dependency: react-dom@18.3.1
+npm error 
+node_modules/react-dom
+npm error   peerOptional 
+react-dom@"^18.3.1" from 
+@medusajs/medusa@2.12.5
+npm error   
+node_modules/@medusajs/medusa
+npm error     
+@medusajs/medusa@"2.12.5" 
+from the root project
+npm error     peerOptional 
+@medusajs/medusa@"2.12.5" 
+from 
+@medusajs/test-utils@2.12.5
+npm error     node_modules/@m
+edusajs/test-utils
+npm error       dev @medusajs
+/test-utils@"2.12.5" from 
+the root project
+npm error       1 more 
+(@medusajs/draft-order)
+npm error
+npm error Fix the upstream 
+dependency conflict, or retry
+npm error this command with 
+--force or --legacy-peer-deps
+npm error to accept an 
+incorrect (and potentially 
+broken) dependency 
+resolution.
+npm error
+npm error
+npm error For a full report 
+see:
+npm error C:\Users\mosta\AppD
+ata\Local\npm-cache\_logs\202
+6-03-08T01_24_11_966Z-eresolv
+e-report.txt
+npm error A complete log of 
+this run can be found in: C:\
+Users\mosta\AppData\Local\npm
+-cache\_logs\2026-03-08T01_24
+_11_966Z-debug-0.log

@@ -1,0 +1,23 @@
+﻿[medusa-config] Stripe credentials not set ÔÇö payment module disabled
+[medusa-config] S3 credentials not set ÔÇö using default local file storage
+[medusa-config] REDIS_URL found ÔÇö enabling Redis event bus, workflow engine, caching, and locking
+[32minfo[39m:    Using flag MEDUSA_FF_INDEX_ENGINE from environment with value false
+[32minfo[39m:    Generating types...
+[32minfo[39m:    No link to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\@medusajs\draft-order\.medusa\server\src\links. skipped.
+[32minfo[39m:    Types generated successfully
+[32minfo[39m:    Starting build...
+[32minfo[39m:    Compiling backend source...
+[32minfo[39m:    Removing existing ".medusa\server" folder
+[32minfo[39m:    Compiling frontend source...
+[32minfo[39m:    Backend build completed successfully (8.89s)
+[31merror[39m:   Unable to compile frontend source
+[31merror[39m:   [31mnode_modules/@medusajs/draft-order/.medusa/server/src/admin/index.mjs (6:9): "useSearchParams" is not exported by "__vite-optional-peer-dep:react-router-dom:@medusajs/draft-order", imported by "node_modules/@medusajs/draft-order/.medusa/server/src/admin/index.mjs".[39m
+file: [36mC:/mostafa/PROJECTS/WisLed/WisLed-Medusa-Back-End/node_modules/@medusajs/draft-order/.medusa/server/src/admin/index.mjs:6:9[39m
+[33m
+4: import { useQuery, useQueryClient, useMutation, keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+5: import React, { useState, useCallback, useMemo, Fragment, createContext, forwardRef, useId, useContext, useTransition...
+6: import { useSearchParams, Link, useNavigate, Outlet, useBlocker, useLocation, useParams } from "react-router-dom";
+            ^
+7: import { EllipsisHorizontal, XMark, InformationCircleSolid, XMarkMini, TrianglesMini, CheckMini, EllipseMiniSolid, Pl...
+8: import Medusa from "@medusajs/js-sdk";
+[39m
