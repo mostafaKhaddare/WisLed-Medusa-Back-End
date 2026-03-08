@@ -1,7 +1,7 @@
-import { Migration } from '@mikro-orm/migrations';
+import { Migration } from "@mikro-orm/migrations";
 
 export class Migration20250101000000 extends Migration {
-  override async up(): Promise<void> {
+  async up(): Promise<void> {
     this.addSql(`create table if not exists "wishlist" (
       "id" text not null,
       "customer_id" text not null,
@@ -23,14 +23,24 @@ export class Migration20250101000000 extends Migration {
       constraint "wishlist_item_pkey" primary key ("id")
     );`);
 
-    this.addSql(`CREATE INDEX IF NOT EXISTS "IDX_wishlist_customer_id" ON "wishlist" (customer_id) WHERE deleted_at IS NULL;`);
-    this.addSql(`CREATE INDEX IF NOT EXISTS "IDX_wishlist_sales_channel_id" ON "wishlist" (sales_channel_id) WHERE deleted_at IS NULL;`);
-    this.addSql(`CREATE INDEX IF NOT EXISTS "IDX_wishlist_item_wishlist_id" ON "wishlist_item" (wishlist_id) WHERE deleted_at IS NULL;`);
-    this.addSql(`CREATE INDEX IF NOT EXISTS "IDX_wishlist_item_product_variant_id" ON "wishlist_item" (product_variant_id) WHERE deleted_at IS NULL;`);
-    this.addSql(`CREATE UNIQUE INDEX IF NOT EXISTS "IDX_wishlist_item_unique" ON "wishlist_item" (wishlist_id, product_variant_id) WHERE deleted_at IS NULL;`);
+    this.addSql(
+      `CREATE INDEX IF NOT EXISTS "IDX_wishlist_customer_id" ON "wishlist" (customer_id) WHERE deleted_at IS NULL;`
+    );
+    this.addSql(
+      `CREATE INDEX IF NOT EXISTS "IDX_wishlist_sales_channel_id" ON "wishlist" (sales_channel_id) WHERE deleted_at IS NULL;`
+    );
+    this.addSql(
+      `CREATE INDEX IF NOT EXISTS "IDX_wishlist_item_wishlist_id" ON "wishlist_item" (wishlist_id) WHERE deleted_at IS NULL;`
+    );
+    this.addSql(
+      `CREATE INDEX IF NOT EXISTS "IDX_wishlist_item_product_variant_id" ON "wishlist_item" (product_variant_id) WHERE deleted_at IS NULL;`
+    );
+    this.addSql(
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_wishlist_item_unique" ON "wishlist_item" (wishlist_id, product_variant_id) WHERE deleted_at IS NULL;`
+    );
   }
 
-  override async down(): Promise<void> {
+  async down(): Promise<void> {
     this.addSql(`drop table if exists "wishlist_item" cascade;`);
     this.addSql(`drop table if exists "wishlist" cascade;`);
   }

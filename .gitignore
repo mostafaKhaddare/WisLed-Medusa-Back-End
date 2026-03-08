@@ -1,28 +1,32 @@
-/dist
+# Dependencies
+node_modules/
+
+# Environment
 .env
-.DS_Store
-/uploads
-/node_modules
-yarn-error.log
+.env.local
+.env.production
+!.env.example
 
-.idea
-
-coverage
-
-!src/**
-
-./tsconfig.tsbuildinfo
-medusa-db.sql
-build
-.cache
-
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-
+# Medusa / build outputs
 .medusa/
-.vscode
+dist/
+build/
+.cache/
+
+# Database
+medusa-db.sql
+
+# Uploads
+/uploads
+
+# OS & IDE
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Test coverage
+coverage/

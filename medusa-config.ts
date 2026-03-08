@@ -1,6 +1,6 @@
 const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
-loadEnv(process.env.NODE_ENV || 'development', proces.cwd());
+loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
 const dynamicModules = {};
 
@@ -121,7 +121,7 @@ module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
-    workerMode: process.env.MEDUSA_WORKER_MODE,
+    workerMode: process.env.WORKER_MODE || 'shared',
     http: {
       storeCors: process.env.STORE_CORS,
       adminCors: process.env.ADMIN_CORS,

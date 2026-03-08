@@ -13,24 +13,39 @@ importers:
       '@medusajs/admin-sdk':
         specifier: 2.12.5
         version: 2.12.5
+      '@medusajs/admin-shared':
+        specifier: 2.12.5
+        version: 2.12.5
       '@medusajs/cli':
         specifier: 2.12.5
         version: 2.12.5(@types/node@20.19.37)
       '@medusajs/dashboard':
         specifier: 2.12.5
         version: 2.12.5(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(typescript@5.9.3)
+      '@medusajs/draft-order':
+        specifier: 2.12.5
+        version: 2.12.5(@medusajs/admin-sdk@2.12.5)(@medusajs/cli@2.12.5(@types/node@20.19.37))(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))(@medusajs/icons@2.12.5(react@18.3.1))(@medusajs/test-utils@2.12.5)(@medusajs/ui@4.0.33(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.20.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@medusajs/file-s3':
         specifier: 2.12.5
         version: 2.12.5(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))
       '@medusajs/framework':
         specifier: 2.12.5
         version: 2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37))
+      '@medusajs/icons':
+        specifier: 2.12.5
+        version: 2.12.5(react@18.3.1)
       '@medusajs/index':
         specifier: 2.12.5
         version: 2.12.5(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))
+      '@medusajs/js-sdk':
+        specifier: 2.12.5
+        version: 2.12.5
       '@medusajs/medusa':
         specifier: 2.12.5
         version: 2.12.5(@medusajs/admin-sdk@2.12.5)(@medusajs/cli@2.12.5(@types/node@20.19.37))(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))(@medusajs/icons@2.12.5(react@18.3.1))(@medusajs/test-utils@2.12.5)(@medusajs/ui@4.0.33(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@swc/core@1.15.18(@swc/helpers@0.5.19))(@types/node@20.19.37)(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(awilix@8.0.1)(picomatch@4.0.3)(posthog-node@5.28.0(rxjs@7.8.2))(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.20.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(yalc@1.0.0-pre.53)
+      '@medusajs/ui':
+        specifier: 4.0.33
+        version: 4.0.33(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
       '@mikro-orm/knex':
         specifier: 6.4.3
         version: 6.4.3(@mikro-orm/core@6.4.16)(pg@8.20.0)
@@ -40,6 +55,9 @@ importers:
       '@react-email/components':
         specifier: 1.0.4
         version: 1.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: 5.64.2
+        version: 5.64.2(react@18.3.1)
       jsonwebtoken:
         specifier: ^9.0.3
         version: 9.0.3
