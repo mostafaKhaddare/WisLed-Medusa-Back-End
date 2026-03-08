@@ -28,13 +28,13 @@
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --runInBand --forceExit"
   },
   "dependencies": {
-    "@medusajs/admin-sdk": "2.12.5",
-    "@medusajs/cli": "2.12.5",
-    "@medusajs/framework": "2.12.5",
-    "@medusajs/icons": "2.12.5",
-    "@medusajs/index": "2.12.5",
-    "@medusajs/medusa": "2.12.5",
-    "@medusajs/ui": "4.0.33",
+    "@medusajs/admin-sdk": "2.8.3",
+    "@medusajs/cli": "2.8.3",
+    "@medusajs/framework": "2.8.3",
+    "@medusajs/icons": "2.8.3",
+    "@medusajs/index": "2.8.3",
+    "@medusajs/medusa": "2.8.3",
+    "@medusajs/ui": "4.0.1",
     "@react-email/components": "1.0.4",
     "awilix": "^8.0.1",
     "express": "^4.19.2",
@@ -52,7 +52,7 @@
     "@types/node": "^20.12.11"
   },
   "devDependencies": {
-    "@medusajs/test-utils": "2.12.5",
+    "@medusajs/test-utils": "2.8.3",
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.13",
