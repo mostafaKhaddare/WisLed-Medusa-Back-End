@@ -1,6 +1,6 @@
 const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
-loadEnv(process.env.NODE_ENV || 'development', process.cwd());
+loadEnv(process.env.NODE_ENV || 'development', proces.cwd());
 
 const dynamicModules = {};
 
