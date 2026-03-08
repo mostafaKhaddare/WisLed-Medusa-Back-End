@@ -1,10 +1,9 @@
 {
-  "name": "wisled",
+  "name": "solace-starter-api",
   "version": "0.0.2",
-  "description": "wisled project",
-  "author": "Mostafa",
+  "description": "A starter for Medusa projects.",
+  "author": "Medusa (https://medusajs.com)",
   "license": "MIT",
-  "packageManager": "npm@10.0.0",
   "keywords": [
     "sqlite",
     "postgres",
@@ -23,7 +22,7 @@
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:integration:new": "TEST_TYPE=integration:new NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "db:init": "npm run db:migrate && npm run db:sync-links && npm run db:seed",
+    "db:init": "yarn run db:migrate && yarn run db:sync-links && yarn run db:seed",
     "db:rollback": "medusa db:rollback",
     "db:sync-links": "medusa db:sync-links",
     "db:migrate": "medusa db:migrate",
@@ -57,5 +56,6 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "packageManager": "yarn@3.2.3+sha512.f26f951f67de0c6a33ee381e5ff364709c87e70eb5e65c694e4facde3512f1fa80b8679e6ba31ce7d340fbb46f08dd683af9457e240f25a204be7427940d767e"
 }
