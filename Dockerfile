@@ -1,28 +1,26 @@
-FROM node:20-alpine AS builder
-WORKDIR /app
+FROM node:20-alpine AS build
+WORKDIR /build
 
-# Install dependencies using npm ci for reproducible install
+# Install dependencies (reproducible)
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
-# Copy source files
+# Copy source code
 COPY . .
 
 # Build Medusa (generates .medusa folder)
 RUN npm run build
 
-# ---------- Runtime image ----------
-FROM node:20-alpine AS runtime
-WORKDIR /app
+# ---------- Runtime stage ----------
+FROM node:20-alpine AS final
+WORKDIR /final
 
-# Copy only the built .medusa folder and production dependencies
-COPY --from=builder /app/.medusa ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/package-lock.json ./
+# Copy built artifacts
+COPY --from=build /build/.medusa ./
+COPY --from=build /build/node_modules ./node_modules
+COPY --from=build /build/package.json ./package.json
+COPY --from=build /build/package-lock.json ./package-lock.json
 
-# Expose Medusa default port (9000)
 EXPOSE 9000
 
-# Start Medusa server
 CMD ["npm", "run", "start"]
