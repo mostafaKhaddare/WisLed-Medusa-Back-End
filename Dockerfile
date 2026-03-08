@@ -1,13 +1,22 @@
-FROM node:latest
+FROM node:20-alpine
 
 WORKDIR /app/medusa
 
+# Install build dependencies
+RUN apk add --no-cache python3 py3-pip make g++
+
+# Copy package files first (better layer caching)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --legacy-peer-deps
+
+# Copy rest of source
 COPY . .
 
-RUN apt-get update && apt-get install -y python3 python3-pip python-is-python3
-
-RUN npm install --legacy-peer-deps
-
+# Build the Medusa project
 RUN npm run build
 
-CMD npm run db:migrate && npm run start
+EXPOSE 9000
+
+CMD ["sh", "-c", "npm run db:migrate && npm run start"]

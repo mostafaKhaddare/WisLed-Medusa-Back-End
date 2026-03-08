@@ -1,9 +1,10 @@
 {
-  "name": "solace-starter-api",
+  "name": "wisled",
   "version": "0.0.2",
-  "description": "A starter for Medusa projects.",
-  "author": "Medusa (https://medusajs.com)",
+  "description": "wisled project",
+  "author": "Mostafa",
   "license": "MIT",
+  "packageManager": "npm@10.0.0",
   "keywords": [
     "sqlite",
     "postgres",
