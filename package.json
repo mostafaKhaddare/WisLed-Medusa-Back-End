@@ -13,14 +13,6 @@
   },
   "author": "Medusa (https://medusajs.com)",
   "license": "MIT",
-  "keywords": [
-    "sqlite",
-    "postgres",
-    "typescript",
-    "ecommerce",
-    "headless",
-    "medusa"
-  ],
   "scripts": {
     "add:admin": "NODE_ENV=development medusa exec ./src/scripts/add-admin.ts",
     "build": "medusa build",
@@ -28,11 +20,7 @@
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start",
     "dev": "medusa develop",
-    "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
-    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "test:integration:new": "TEST_TYPE=integration:new NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "db:init": "yarn run db:migrate && yarn run db:sync-links && yarn run db:seed",
+    "db:init": "pnpm run db:migrate && pnpm run db:sync-links && pnpm run db:seed",
     "db:rollback": "medusa db:rollback",
     "db:sync-links": "medusa db:sync-links",
     "db:migrate": "medusa db:migrate",
@@ -41,17 +29,24 @@
   "dependencies": {
     "@medusajs/admin-sdk": "2.12.5",
     "@medusajs/cli": "2.12.5",
+    "@medusajs/dashboard": "2.12.5",
+    "@medusajs/file-s3": "2.12.5",
     "@medusajs/framework": "2.12.5",
     "@medusajs/index": "2.12.5",
     "@medusajs/medusa": "2.12.5",
+    "@mikro-orm/knex": "6.4.3",
+    "@mikro-orm/migrations": "6.4.3",
     "@react-email/components": "1.0.4",
-    "resend": "^6.7.0"
+    "jsonwebtoken": "^9.0.3",
+    "resend": "^6.7.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.12.5",
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.13",
+    "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "^20.12.11",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.2.25",
