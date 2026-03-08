@@ -19,7 +19,7 @@ build
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
-!.yarn/releases
+!.yarn/releases        # ← must be committed so Cloud uses correct yarn version
 !.yarn/sdks
 !.yarn/versions
 
