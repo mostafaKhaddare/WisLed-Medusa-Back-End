@@ -61,12 +61,10 @@ if (redisUrl) {
 const modules: unknown[] = [
   // ── Custom application modules ──────────────────────────────────────────
   {
-    resolve: path.resolve(__dirname, './src/modules/product-media'),
-    definition: { isQueryable: true },
+    resolve: "./src/modules/product-media",
   },
   {
-    resolve: path.resolve(__dirname, './src/modules/wishlist'),
-    definition: { isQueryable: true },
+    resolve: "./src/modules/wishlist",
   },
 ];
 
