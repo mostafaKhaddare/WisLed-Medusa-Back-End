@@ -58,7 +58,7 @@ if (redisUrl) {
 // ---------------------------------------------------------------------------
 // Build the modules array
 // ---------------------------------------------------------------------------
-const modules: unknown[] = [
+const modules = [
   // ── Custom application modules ──────────────────────────────────────────
   {
     resolve: "./src/modules/product-media",
@@ -178,7 +178,7 @@ module.exports = defineConfig({
     //   "server"  → handles HTTP API requests + serves Admin UI  (set in production server instance)
     //   "worker"  → handles subscribers, scheduled jobs           (set in production worker instance)
     //   "shared"  → both in one process                           (default, suitable for development)
-    workerMode: (process.env.MEDUSA_WORKER_MODE as 'shared' | 'worker' | 'server') || 'shared',
+    workerMode: process.env.MEDUSA_WORKER_MODE || 'shared',
     http: {
       // CORS origins — must be set to your actual frontend / admin URLs in production
       storeCors: process.env.STORE_CORS || 'http://localhost:8000',
