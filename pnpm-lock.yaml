@@ -4,6 +4,8 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+pnpmfileChecksum: sha256-yV4Y0kTzaOd8xD2UbPRpw3za1XrJQ357wZeMISGwogQ=
+
 importers:
 
   .:
@@ -18,8 +20,8 @@ importers:
         specifier: 2.12.5
         version: 2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37))
       '@medusajs/index':
-        specifier: ^2.12.5
-        version: 2.13.3(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))
+        specifier: 2.12.5
+        version: 2.12.5(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))
       '@medusajs/medusa':
         specifier: 2.12.5
         version: 2.12.5(@medusajs/admin-sdk@2.12.5)(@medusajs/cli@2.12.5(@types/node@20.19.37))(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))(@medusajs/icons@2.12.5(react@18.3.1))(@medusajs/test-utils@2.12.5)(@medusajs/ui@4.0.33(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@swc/core@1.15.18(@swc/helpers@0.5.19))(@types/node@20.19.37)(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(awilix@8.0.1)(picomatch@4.0.3)(posthog-node@5.28.0(rxjs@7.8.2))(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.20.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(yalc@1.0.0-pre.53)
@@ -1153,12 +1155,6 @@ packages:
     engines: {node: '>=20'}
     peerDependencies:
       '@medusajs/framework': 2.12.5
-
-  '@medusajs/index@2.13.3':
-    resolution: {integrity: sha512-yG70QCKIrjCCc23rOt9Py2jK+lZsMFvcd05XB8RHI3gnfNhBUfcpAn97OIIh6+V6NFNSyjPOJyjW4fUcoZ7n3w==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@medusajs/framework': 2.13.3
 
   '@medusajs/inventory@2.12.5':
     resolution: {integrity: sha512-DFZI8AgB3C4lOJqW26KVbZUGRrYcyHW8+5mQAjFhQM1daTVRl/slpCwKzn3LaoOzvuFlVM1hGuS9oIZVyWWU9A==}
@@ -8560,10 +8556,6 @@ snapshots:
       react: 18.3.1
 
   '@medusajs/index@2.12.5(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))':
-    dependencies:
-      '@medusajs/framework': 2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37))
-
-  '@medusajs/index@2.13.3(@medusajs/framework@2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37)))':
     dependencies:
       '@medusajs/framework': 2.12.5(@medusajs/cli@2.12.5(@types/node@20.19.37))(@types/node@20.19.37)(ioredis@5.10.0)(vite@5.4.21(@types/node@20.19.37))
 

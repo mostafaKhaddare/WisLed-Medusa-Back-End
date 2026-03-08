@@ -42,7 +42,7 @@
     "@medusajs/admin-sdk": "2.12.5",
     "@medusajs/cli": "2.12.5",
     "@medusajs/framework": "2.12.5",
-    "@medusajs/index": "^2.12.5",
+    "@medusajs/index": "2.12.5",
     "@medusajs/medusa": "2.12.5",
     "@react-email/components": "1.0.4",
     "resend": "^6.7.0"
