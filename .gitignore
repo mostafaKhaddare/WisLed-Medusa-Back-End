@@ -25,6 +25,8 @@ medusa-db.sql
 .vscode/
 *.log
 
+
+
 # TypeScript
 *.tsbuildinfo
 
