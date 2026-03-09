@@ -1,55 +1,28 @@
-FROM public.ecr.aws/docker/library/node:20.20.0-slim AS base
-
-# Move this DOWN so it doesn't affect the install phase
-# ENV NODE_ENV=production 
-ENV PNPM_HOME=/pnpm
-ENV PATH=$PNPM_HOME:$PATH
-
-WORKDIR /app
-RUN corepack enable
-
 # ---------------------------
-# deps (install)
+# 1. Install Stage (CLEAN ENVIRONMENT)
 # ---------------------------
 FROM base AS deps
 
 COPY package.json pnpm-lock.yaml ./
 
-# 1. We don't set NODE_ENV=production here so we get ALL dependencies
-# 2. Re-enabled --frozen-lockfile for security
+# DO NOT source the .env here. 
+# This ensures the lockfile matches your local machine perfectly.
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
   pnpm install --frozen-lockfile
 
 # ---------------------------
-# build (medusa build)
+# 2. Build Stage (WITH SECRETS)
 # ---------------------------
 FROM base AS build
 
-# Copy everything from deps
+# Copy the node_modules we just installed
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 
+# Copy your source code
 COPY . .
 
-# Now we have the Medusa CLI and TypeScript needed to build
-RUN pnpm medusa build
-
-# ---------------------------
-# runtime (minimal)
-# ---------------------------
-FROM base AS runtime
-
-# NOW we set it to production for the final lean image
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-# Only copy the production-ready node_modules and built server
-COPY --from=build /app/node_modules ./node_modules
-
-WORKDIR /app/.medusa/server
-COPY --from=build /app/.medusa/server ./
-
-EXPOSE 9000
-
-CMD ["pnpm", "start"]
+# NOW we bring in the secrets, but ONLY for the build command
+# Medusa needs the .env variables here to compile the admin/server
+RUN --mount=type=secret,id=ENV_FILE,target=/tmp/.env \
+    (set -a && . /tmp/.env && pnpm medusa build)
