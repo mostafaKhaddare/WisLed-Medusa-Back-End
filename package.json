@@ -2,15 +2,6 @@
   "name": "solace-starter-api",
   "version": "0.0.2",
   "description": "A starter for Medusa projects.",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@medusajs/telemetry",
-      "@swc/core",
-      "esbuild",
-      "msgpackr-extract",
-      "protobufjs"
-    ]
-  },
   "author": "Medusa (https://medusajs.com)",
   "license": "MIT",
   "scripts": {
