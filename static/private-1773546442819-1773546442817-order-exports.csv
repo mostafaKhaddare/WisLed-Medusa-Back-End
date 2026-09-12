@@ -1,0 +1,11 @@
+Order_ID,Display_ID,Order status,Date,Customer First name,Customer Last name,Customer Email,Customer ID,Shipping Address 1,Shipping Address 2,Shipping Country Code,Shipping City,Shipping Postal Code,Shipping Region ID,Fulfillment Status,Payment Status,Subtotal,Shipping Total,Discount Total,Tax Total,Total,Currency Code
+order_01K8ESMJSE61VN8V0RKMPJYN7J,1,pending,2025-10-25T23:00:42.428Z,,,,,,,,,,reg_01K7D6JFRHTWFD0XPTKZB7ZVPY,delivered,captured,70,10,0,0,70,eur
+order_01KBNKPB1QAM2CJR7NQPADX6PR,2,pending,2025-12-04T21:18:35.077Z,,,,,,,,,,reg_01K7D6JFRHTWFD0XPTKZB7ZVPY,delivered,captured,22,10,0,0,22,eur
+order_01KCE2KMW9RTV6NZE73HZMHGC0,3,canceled,2025-12-14T09:21:01.839Z,,,,,,,,,,reg_01K7D6JFRHTWFD0XPTKZB7ZVPY,not_fulfilled,canceled,80,10,0,0,0,eur
+order_01KCE2PY8CAWXF60VG4G32KPSP,4,canceled,2025-12-14T09:22:49.742Z,,,,,,,,,,reg_01K7D6JFRHTWFD0XPTKZB7ZVPY,not_fulfilled,canceled,50,10,0,0,0,eur
+order_01KH4TN60AFHACM5TPZ12ZQ0WY,5,pending,2026-02-10T22:27:22.768Z,,,mostafa.khaddare@gmail.com,cus_01KF8ZFH4R618KN3D2GYZ17T79,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,not_fulfilled,authorized,500,0,0,0,500,mad
+order_01KH4TY5R7GZ5K8EB3HAFPM98P,6,pending,2026-02-10T22:32:17.454Z,,,mostafa.khaddare@gmail.com,cus_01KF8ZFH4R618KN3D2GYZ17T79,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,not_fulfilled,not_paid,710,0,0,0,710,mad
+order_01KH4VJJJG5JNCPVWZEY9Q03JW,7,canceled,2026-02-10T22:43:25.908Z,,,mostafa.khaddare@gmail.com,cus_01KF8ZFH4R618KN3D2GYZ17T79,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,not_fulfilled,canceled,8.333333333333334,0,0,1.6666666666666667,0,mad
+order_01KHMDGJNGWBKF2XGPWJR796AS,8,canceled,2026-02-16T23:45:31.324Z,,,mostafa.khaddare@gmail.com,cus_01KF8ZFH4R618KN3D2GYZ17T79,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,not_fulfilled,canceled,191.66666666666666,0,0,38.333333333333336,0,mad
+order_01KHMEJCTDHTFH6TQ587CFN4ZV,9,pending,2026-02-17T00:03:59.443Z,,,zakaria@gmail.com,cus_01KHMEGPFV80BX7B2JA4BP91Y9,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,delivered,captured,2500,0,0,500,3000,mad
+order_01KHMF8PDM57PAZYW1QA7S2SQ7,10,pending,2026-02-17T00:16:10.166Z,,,mostafa.khaddare@gmail.com,cus_01KF8ZFH4R618KN3D2GYZ17T79,,,,,,reg_01KE0D4RC5K545DJM4MEQ4DRM2,delivered,captured,241.66666666666666,50,0,48.333333333333336,290,mad

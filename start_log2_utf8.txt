@@ -1,0 +1,103 @@
+﻿Ô£à Stripe enabled
+Ô£à DigitalOcean Spaces enabled
+Ô£à Resend email enabled
+[32minfo[39m:    Using flag MEDUSA_FF_INDEX_ENGINE from environment with value false
+npx : - Creating server
+At line:1 char:1
++ npx medusa start > 
+start_log2.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo          : N 
+   otSpecified: (- Creating se  
+  rver:String) [], RemoteExce   
+ ption
+    + FullyQualifiedErrorId : N 
+   ativeCommandError
+ 
+[32minfo[39m:    Using flag MEDUSA_FF_INDEX_ENGINE from environment with value false
+[32minfo[39m:    Skipping instrumentation registration. No register function found.
+[32minfo[39m:    Using flag MEDUSA_FF_INDEX_ENGINE from environment with value false
+[32minfo[39m:    No link to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\.pnpm\@medusajs+draft-order@2.12._499558ed94ddf5bfa5686cb40f71ffbe\node_modules\@medusajs\draft-order\.medusa\server\src\links. skipped.
+[33mwarn[39m:    Local Event Bus installed. This is not recommended for production.
+[32minfo[39m:    Locking module: Using "in-memory" as default.
+[32minfo[39m:    No workflow to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\.pnpm\@medusajs+draft-order@2.12._499558ed94ddf5bfa5686cb40f71ffbe\node_modules\@medusajs\draft-order\.medusa\server\src\workflows. skipped.
+[32minfo[39m:    No subscriber to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\.pnpm\@medusajs+draft-order@2.12._499558ed94ddf5bfa5686cb40f71ffbe\node_modules\@medusajs\draft-order\.medusa\server\src\subscribers. skipped.
+[32minfo[39m:    No job to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\.pnpm\@medusajs+medusa@2.12.5_@me_c3118ed0f0e3d793324a979269c6426e\node_modules\@medusajs\medusa\dist\jobs. skipped.
+[32minfo[39m:    No job to load from C:\mostafa\PROJECTS\WisLed\WisLed-Medusa-Back-End\node_modules\.pnpm\@medusajs+draft-order@2.12._499558ed94ddf5bfa5686cb40f71ffbe\node_modules\@medusajs\draft-order\.medusa\server\src\jobs. skipped.
+[ioredis] Unhandled error 
+event: AggregateError
+    at internalConnectMultiple 
+(node:net:1122:18)
+    at afterConnectMultiple 
+(node:net:1689:7)
+    at TCPConnectWrap.callbackTr
+ampoline (node:internal/async_ho
+oks:130:17)
+[ioredis] Unhandled error 
+event: AggregateError
+    at internalConnectMultiple 
+(node:net:1122:18)
+    at afterConnectMultiple 
+(node:net:1689:7)
+    at TCPConnectWrap.callbackTr
+ampoline (node:internal/async_ho
+oks:130:17)
+[31merror[39m:   Error starting server
+[31merror[39m:   Could not find index.html in the admin build directory. Make sure to run 'medusa build' before starting the server.
+Error: Could not find 
+index.html in the admin build 
+directory. Make sure to run 
+'medusa build' before starting 
+the server.
+    at serve (C:\mostafa\PROJECT
+S\WisLed\WisLed-Medusa-Back-End\
+node_modules\.pnpm\@medusajs+adm
+in-bundler@2.1_567b877e309a64065
+ce5629e0fa773ef\node_modules\@me
+dusajs\admin-bundler\dist\index.
+js:1616:11)
+    at serveProductionBuild (C:\
+mostafa\PROJECTS\WisLed\WisLed-M
+edusa-Back-End\node_modules\.pnp
+m\@medusajs+medusa@2.12.5_@me_c3
+118ed0f0e3d793324a979269c6426e\n
+ode_modules\@medusajs\medusa\src
+\loaders\admin.ts:90:28)
+    at async Promise.allSettled 
+(index 1)
+    at async promiseAll (C:\most
+afa\PROJECTS\WisLed\WisLed-Medus
+a-Back-End\node_modules\.pnpm\@m
+edusajs+utils@2.12.5_@types+node
+@20.19.37_express@4.22.1\node_mo
+dules\@medusajs\utils\src\common
+\promise-all.ts:27:18)
+    at async loadEntrypoints (C:
+\mostafa\PROJECTS\WisLed\WisLed-
+Medusa-Back-End\node_modules\.pn
+pm\@medusajs+medusa@2.12.5_@me_c
+3118ed0f0e3d793324a979269c6426e\
+node_modules\@medusajs\medusa\sr
+c\loaders\index.ts:117:26)
+    at async exports.default (C:
+\mostafa\PROJECTS\WisLed\WisLed-
+Medusa-Back-End\node_modules\.pn
+pm\@medusajs+medusa@2.12.5_@me_c
+3118ed0f0e3d793324a979269c6426e\
+node_modules\@medusajs\medusa\sr
+c\loaders\index.ts:213:7)
+    at async internalStart (C:\m
+ostafa\PROJECTS\WisLed\WisLed-Me
+dusa-Back-End\node_modules\.pnpm
+\@medusajs+medusa@2.12.5_@me_c31
+18ed0f0e3d793324a979269c6426e\no
+de_modules\@medusajs\medusa\src\
+commands\start.ts:271:59)
+    at async start (C:\mostafa\P
+ROJECTS\WisLed\WisLed-Medusa-Bac
+k-End\node_modules\.pnpm\@medusa
+js+medusa@2.12.5_@me_c3118ed0f0e
+3d793324a979269c6426e\node_modul
+es\@medusajs\medusa\src\commands
+\start.ts:415:12)
