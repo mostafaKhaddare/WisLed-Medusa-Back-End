@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: wisled-medusa-backend
+    env: node
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build
+    startCommand: pnpm run start
+    healthCheckPath: /health
+    autoDeploy: true
+    runtime: node
+    plan: starter
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: MEDUSA_BACKEND_URL
+        sync: false
+      - key: STORE_CORS
+        sync: false
+      - key: ADMIN_CORS
+        sync: false
+      - key: AUTH_CORS
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: COOKIE_SECRET
+        sync: false
+      - key: STRIPE_API_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: DO_SPACE_URL
+        sync: false
+      - key: DO_SPACE_ACCESS_KEY
+        sync: false
+      - key: DO_SPACE_SECRET_KEY
+        sync: false
+      - key: DO_SPACE_BUCKET
+        sync: false
+      - key: DO_SPACE_REGION
+        sync: false
+      - key: DO_SPACE_ENDPOINT
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: MEDUSA_FF_INDEX_ENGINE
+        value: "false"

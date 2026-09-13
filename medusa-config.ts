@@ -1,6 +1,33 @@
 const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
+const isProduction = process.env.NODE_ENV === 'production';
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
+
+const requiredProductionEnv = [
+  'DATABASE_URL',
+  'REDIS_URL',
+  'JWT_SECRET',
+  'COOKIE_SECRET',
+  'MEDUSA_BACKEND_URL',
+  'STORE_CORS',
+  'ADMIN_CORS',
+  'AUTH_CORS',
+];
+
+const missingProductionEnv = requiredProductionEnv.filter((name) => !process.env[name]);
+if (isProduction && missingProductionEnv.length > 0) {
+  throw new Error(
+    `Missing required production env vars: ${missingProductionEnv.join(', ')}`
+  );
+}
+
+const parseCors = (value) =>
+  value
+    ?.split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .join(',') ||
+  (isProduction ? undefined : 'http://localhost:3000,http://localhost:8000');
 
 const dynamicModules = {};
 
@@ -57,10 +84,9 @@ if (isStorageConfigured) {
       ],
     },
   };
-} else {
+} else if (!isProduction) {
   console.warn('⚠️  DO Space vars missing — using local file storage');
 }
-
 
 // ── Resend (Email) ────────────────────────────────────────────────────────────
 const isResendConfigured =
@@ -85,7 +111,7 @@ if (isResendConfigured) {
       ],
     },
   };
-} else {
+} else if (!isProduction) {
   console.warn('⚠️  Resend vars missing — email notifications disabled');
 }
 
@@ -113,6 +139,13 @@ dynamicModules['wishlist'] = {
   },
 };
 
+const jwtSecret = process.env.JWT_SECRET || (isProduction ? undefined : 'dev-jwt-secret');
+const cookieSecret = process.env.COOKIE_SECRET || (isProduction ? undefined : 'dev-cookie-secret');
+
+if (!jwtSecret || !cookieSecret) {
+  throw new Error('JWT_SECRET and COOKIE_SECRET must be defined in production.');
+}
+
 // ── Export Config ─────────────────────────────────────────────────────────────
 module.exports = defineConfig({
   admin: {
@@ -124,11 +157,11 @@ module.exports = defineConfig({
     redisUrl: process.env.REDIS_URL,
     workerMode: process.env.WORKER_MODE || 'shared',
     http: {
-      storeCors: process.env.STORE_CORS,
-      adminCors: process.env.ADMIN_CORS,
-      authCors: process.env.AUTH_CORS,
-      jwtSecret: process.env.JWT_SECRET || 'supersecret',
-      cookieSecret: process.env.COOKIE_SECRET || 'supersecret',
+      storeCors: parseCors(process.env.STORE_CORS),
+      adminCors: parseCors(process.env.ADMIN_CORS),
+      authCors: parseCors(process.env.AUTH_CORS),
+      jwtSecret,
+      cookieSecret,
     },
   },
   modules: {

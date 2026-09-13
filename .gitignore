@@ -7,6 +7,9 @@ node_modules/
 .env.production
 !.env.example
 .env*
+secrets*
+start_log*
+
 # Medusa / build outputs
 .medusa/
 dist/
@@ -24,8 +27,6 @@ medusa-db.sql
 .idea/
 .vscode/
 *.log
-
-
 
 # TypeScript
 *.tsbuildinfo

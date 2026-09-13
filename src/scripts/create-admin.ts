@@ -3,12 +3,13 @@ import { IUserModuleService } from "@medusajs/framework/types";
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { createUsersWorkflow } from "@medusajs/medusa/core-flows";
 
+const adminBaseUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
+
 export default async function createAdminUser({ container }: { container: MedusaContainer }) {
   const userService = container.resolve<IUserModuleService>(Modules.USER);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
-  
+
   try {
-    // Check if admin user already exists using query
     const { data: existingUsers } = await query.graph({
       entity: "user",
       fields: ["*"],
@@ -16,10 +17,9 @@ export default async function createAdminUser({ container }: { container: Medusa
         email: "admin@example.com"
       }
     });
-    
+
     if (existingUsers.length === 0) {
-      // Create admin user using workflow
-      const { result: users } = await createUsersWorkflow(container).run({
+      await createUsersWorkflow(container).run({
         input: {
           users: [{
             email: "admin@example.com",
@@ -28,13 +28,14 @@ export default async function createAdminUser({ container }: { container: Medusa
           }]
         }
       });
-      
+
       console.log("✅ Admin user created: admin@example.com");
-      console.log("🌐 Admin URL: https://wisled-medusa-back-end-production.up.railway.app/admin");
+      console.log(`🌐 Admin URL: ${new URL("/admin", adminBaseUrl).toString()}`);
     } else {
       console.log("ℹ️ Admin user already exists: admin@example.com");
     }
   } catch (error) {
-    console.error("❌ Error creating admin user:", error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("❌ Error creating admin user:", message);
   }
 }

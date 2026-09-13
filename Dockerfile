@@ -39,14 +39,11 @@ RUN pnpm run build
 FROM base AS runtime
 
 ENV NODE_ENV=production
-ENV PORT=9000
 
 WORKDIR /app/.medusa/server
 COPY --from=build /app/.medusa/server ./
 
 RUN printf "dangerouslyAllowAllBuilds=true\n" >> .npmrc \
   && pnpm install --prod --frozen-lockfile=false
-
-EXPOSE 9000
 
 CMD ["pnpm", "start"]
