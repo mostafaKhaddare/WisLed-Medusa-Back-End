@@ -1,4 +1,4 @@
-## Medusa v2 (2.12.x) production image for DigitalOcean App Platform
+## Medusa v2 (2.12.x) production image for Render Web Service
 FROM node:20-bookworm-slim AS base
 
 ENV PNPM_HOME=/pnpm
@@ -44,8 +44,9 @@ ENV PORT=9000
 WORKDIR /app/.medusa/server
 COPY --from=build /app/.medusa/server ./
 
-RUN pnpm install --prod --frozen-lockfile=false
+RUN printf "dangerouslyAllowAllBuilds=true\n" >> .npmrc \
+  && pnpm install --prod --frozen-lockfile=false
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "pnpm run predeploy && pnpm start"]
+CMD ["pnpm", "start"]
