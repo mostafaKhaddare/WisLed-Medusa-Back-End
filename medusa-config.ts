@@ -1,6 +1,7 @@
 const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const isBuildCommand = process.argv.some((arg) => arg.toLowerCase().includes('build'));
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
 const requiredProductionEnv = [
@@ -15,7 +16,7 @@ const requiredProductionEnv = [
 ];
 
 const missingProductionEnv = requiredProductionEnv.filter((name) => !process.env[name]);
-if (isProduction && missingProductionEnv.length > 0) {
+if (isProduction && !isBuildCommand && missingProductionEnv.length > 0) {
   throw new Error(
     `Missing required production env vars: ${missingProductionEnv.join(', ')}`
   );
@@ -139,10 +140,10 @@ dynamicModules['wishlist'] = {
   },
 };
 
-const jwtSecret = process.env.JWT_SECRET || (isProduction ? undefined : 'dev-jwt-secret');
-const cookieSecret = process.env.COOKIE_SECRET || (isProduction ? undefined : 'dev-cookie-secret');
+const jwtSecret = process.env.JWT_SECRET || (isProduction && !isBuildCommand ? undefined : 'dev-jwt-secret');
+const cookieSecret = process.env.COOKIE_SECRET || (isProduction && !isBuildCommand ? undefined : 'dev-cookie-secret');
 
-if (!jwtSecret || !cookieSecret) {
+if (isProduction && !isBuildCommand && (!jwtSecret || !cookieSecret)) {
   throw new Error('JWT_SECRET and COOKIE_SECRET must be defined in production.');
 }
 
