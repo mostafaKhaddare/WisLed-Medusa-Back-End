@@ -13,7 +13,7 @@
     "dev": "medusa develop",
     "db:init": "pnpm run db:migrate && pnpm run db:sync-links && pnpm run db:seed",
     "db:rollback": "medusa db:rollback",
-    "db:sync-links": "medusa db:sync-links --execute-safe",
+    "db:sync-links": "medusa db:sync-links --execute-all",
     "db:migrate": "medusa db:migrate",
     "db:seed": "medusa exec ./src/scripts/seed.ts"
   },
