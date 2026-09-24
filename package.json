@@ -9,11 +9,11 @@
     "build": "medusa build",
     "cloud:build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
-    "start": "medusa start",
+    "start": "pnpm run db:migrate && pnpm run db:sync-links && medusa start",
     "dev": "medusa develop",
     "db:init": "pnpm run db:migrate && pnpm run db:sync-links && pnpm run db:seed",
     "db:rollback": "medusa db:rollback",
-    "db:sync-links": "medusa db:sync-links",
+    "db:sync-links": "medusa db:sync-links --execute-safe",
     "db:migrate": "medusa db:migrate",
     "db:seed": "medusa exec ./src/scripts/seed.ts"
   },
