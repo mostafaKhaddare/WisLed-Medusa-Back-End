@@ -32,7 +32,7 @@ export class Migration20250222SearchEnhancement extends Migration {
         RETURNS text
         LANGUAGE sql IMMUTABLE PARALLEL SAFE STRICT AS
       $func$
-        SELECT unaccent('unaccent', $1)
+        SELECT public.unaccent($1)
       $func$;
     `);
 
