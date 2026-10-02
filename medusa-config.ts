@@ -85,8 +85,41 @@ if (isStorageConfigured) {
       ],
     },
   };
-} else if (!isProduction) {
-  console.warn('⚠️  DO Space vars missing — using local file storage');
+} else {
+  /**
+   * Warn in production too, not just development.
+   *
+   * Previously this only fired outside production, so a deployment missing the
+   * DO_SPACE_* variables failed completely silently. Medusa falls back to its
+   * built-in local disk provider, which on Render means an ephemeral
+   * filesystem: uploads survive only until the next deploy, and the URLs stored
+   * in `product_image.url` are generated against an inferred origin that
+   * defaults to `http://localhost:9000`. The storefront then requests images
+   * from its own machine and every product image 404s, with nothing in the logs
+   * to say why.
+   *
+   * This is a warning and deliberately not a throw: refusing to boot would take
+   * down the admin, regions, categories and product creation, which is a far
+   * worse outcome than degraded images.
+   */
+  const missing = [
+    'DO_SPACE_URL',
+    'DO_SPACE_ACCESS_KEY',
+    'DO_SPACE_SECRET_KEY',
+    'DO_SPACE_BUCKET',
+    'DO_SPACE_REGION',
+  ].filter((name) => !process.env[name]);
+
+  if (missing.length > 0) {
+    console.warn(
+      `⚠️  Object storage DISABLED — missing: ${missing.join(', ')}`
+    );
+    console.warn(
+      '⚠️  Uploads are going to the local disk. On Render that filesystem is ' +
+        'ephemeral, so files are lost on every redeploy and product image URLs ' +
+        'are generated as http://localhost:9000/static/...'
+    );
+  }
 }
 
 // ── Resend (Email) ────────────────────────────────────────────────────────────
