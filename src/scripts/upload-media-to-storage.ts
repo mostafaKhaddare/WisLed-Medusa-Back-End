@@ -4,7 +4,7 @@ import { join, extname, basename, relative } from 'path'
 import { PutObjectCommand, S3Client, HeadObjectCommand } from '@aws-sdk/client-s3'
 
 /**
- * Copy local product media to Sirv over the S3 API.
+ * Copy local product media to object storage over the S3 API.
  *
  * Why this is needed
  * -----------------
@@ -16,33 +16,43 @@ import { PutObjectCommand, S3Client, HeadObjectCommand } from '@aws-sdk/client-s
  *
  * The original uploads survive only in this repository's `static/` folder, whose
  * filenames use the same timestamp scheme as the dead URLs. This script copies
- * them to Sirv, which is the only remaining source of truth for the media.
+ * them to object storage, which is the only remaining source of truth for the
+ * media.
  *
- * Why this exists instead of just letting Medusa upload
- * -----------------------------------------------------
- * `@medusajs/file-s3` sends `ACL: public-read` on every PutObject
- * (s3-file.js). Sirv does not implement S3 bucket ACLs and is expected to
- * reject that header. This script deliberately omits it, which sidesteps the
- * problem for the migration. Uploads made through the Medusa admin afterwards
- * still go through the driver and still carry the header, so that path needs
- * its own fix before admin uploads can be trusted.
+ * Provider support
+ * ----------------
+ * Works against any S3-compatible store. Config is read from the same
+ * `DO_SPACE_*` names the running app uses, so the Render environment block can
+ * be pasted here verbatim.
+ *
+ *   - Backblaze B2: no `DO_SPACE_ENDPOINT` needed; the SDK resolves it from the
+ *     region. Public bucket, free egress.
+ *   - Sirv: requires `DO_SPACE_ENDPOINT=https://s3.sirv.com`, and its CDN only
+ *     serves files uploaded through its own web interface. Files written here
+ *     store successfully but are rejected at request time by Sirv's imaging
+ *     engine with "No image metadata available", so Sirv is not usable as the
+ *     upload backend for Medusa.
  *
  * Safety properties
  * -----------------
  *   - Dry run by default. Set APPLY=1 to upload.
  *   - Skips objects already present in the bucket, so it is safe to rerun and
  *     will not re-transfer 199 MB on a second attempt.
+ *   - Streams each file and sets ContentLength explicitly. Sirv's signature
+ *     validation rejects the request when the SDK is free to choose its own
+ *     payload encoding, which it does for in-memory bodies.
  *   - Only image extensions are considered. The product export CSVs sitting in
  *     the same folder are deliberately skipped: they are not media, and they
  *     contain the full catalog.
  *   - Uploads with the exact original filename as the S3 key, so the backfill
- *     can rewrite `.../static/<name>` to `<SIRV_URL>/<name>` with a pure
- *     prefix substitution and no lookup table.
+ *     can rewrite `.../static/<name>` to `<url>/<name>` with a pure prefix
+ *     substitution and no lookup table.
  *   - Nothing is deleted locally, and no database row is touched here.
  *
  * Usage:
  *   pnpm run media:upload
  *   APPLY=1 pnpm run media:upload
+ *   LIMIT=1 APPLY=1 pnpm run media:upload    # validate a single object first
  *   SOURCE_DIR=./static pnpm run media:upload
  *   PREFIX=products pnpm run media:upload
  */
@@ -74,23 +84,42 @@ interface Config {
   endpoint: string
 }
 
+/**
+ * Object storage configuration.
+ *
+ * Reads the same `DO_SPACE_*` names the Medusa app itself uses, so the block can
+ * be pasted verbatim from Render into a local `.env` and the two environments
+ * cannot drift. The `SIRV_*` names are accepted as a fallback for older local
+ * setups.
+ *
+ * `endpoint` is optional: omitting it lets the AWS SDK resolve the correct S3
+ * endpoint from the region, which is what Backblaze B2 and AWS both want. It is
+ * required for providers that are not AWS, such as Sirv at s3.sirv.com.
+ *
+ * `forcePathStyle` defaults to on. Path-style URLs are accepted by B2 and are
+ * mandatory for Sirv, so the default is the portable one.
+ */
 function readConfig(): Config | null {
+  const pick = (name: string) => process.env[`DO_SPACE_${name}`] || process.env[`SIRV_${name}`]
+
   const cfg = {
-    url: process.env.SIRV_URL?.replace(/\/+$/, ''),
-    accessKeyId: process.env.SIRV_ACCESS_KEY,
-    secretAccessKey: process.env.SIRV_SECRET_KEY,
-    bucket: process.env.SIRV_BUCKET,
-    region: process.env.SIRV_REGION ?? 'sirv',
-    endpoint: process.env.SIRV_ENDPOINT ?? 'https://s3.sirv.com',
+    url: pick('URL')?.replace(/\/+$/, ''),
+    accessKeyId: pick('ACCESS_KEY'),
+    secretAccessKey: pick('SECRET_KEY'),
+    bucket: pick('BUCKET'),
+    region: pick('REGION'),
+    endpoint: process.env.DO_SPACE_ENDPOINT || process.env.SIRV_ENDPOINT,
   }
 
-  const missing = Object.entries(cfg)
-    .filter(([k, v]) => !v)
-    .map(([k]) => k)
+  const required = ['URL', 'ACCESS_KEY', 'SECRET_KEY', 'BUCKET', 'REGION'] as const
+  const missing = required
+    .filter((k) => !cfg[k === 'URL' ? 'url' : k === 'ACCESS_KEY' ? 'accessKeyId' : k === 'SECRET_KEY' ? 'secretAccessKey' : k === 'BUCKET' ? 'bucket' : 'region'])
+    .map((k) => `DO_SPACE_${k}`)
 
   if (missing.length) {
     console.log(`\n⚠️  Missing: ${missing.join(', ')}`)
-    console.log('   Set SIRV_URL, SIRV_ACCESS_KEY, SIRV_SECRET_KEY and SIRV_BUCKET.\n')
+    console.log('   Set DO_SPACE_URL, DO_SPACE_ACCESS_KEY, DO_SPACE_SECRET_KEY,')
+    console.log('   DO_SPACE_BUCKET and DO_SPACE_REGION.\n')
     return null
   }
   return cfg as Config
@@ -164,13 +193,14 @@ async function main() {
   console.log(`Public URL : ${cfg.url}`)
   console.log(`Mode       : ${APPLY ? 'APPLY' : 'DRY RUN (set APPLY=1 to upload)'}\n`)
 
-  // Sirv only accepts path-style requests. The AWS SDK v3 client would
-  // otherwise build virtual-host URLs like https://<bucket>.s3.sirv.com,
-  // which does not resolve.
+  // Path-style is accepted by Backblaze B2 and required by Sirv, so it stays on
+  // unless a provider is known to need virtual-host style.
+  const forcePathStyle = process.env.DO_SPACE_FORCE_PATH_STYLE !== 'false'
+
   const client = new S3Client({
     region: cfg.region,
-    endpoint: cfg.endpoint,
-    forcePathStyle: true,
+    ...(cfg.endpoint ? { endpoint: cfg.endpoint } : {}),
+    forcePathStyle,
     credentials: {
       accessKeyId: cfg.accessKeyId as string,
       secretAccessKey: cfg.secretAccessKey as string,
