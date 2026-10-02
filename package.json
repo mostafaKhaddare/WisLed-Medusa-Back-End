@@ -15,7 +15,8 @@
     "db:rollback": "medusa db:rollback",
     "db:sync-links": "medusa db:sync-links --execute-all",
     "db:migrate": "medusa db:migrate",
-    "db:seed": "medusa exec ./src/scripts/seed.ts"
+    "db:seed": "medusa exec ./src/scripts/seed.ts",
+    "media:backfill": "medusa exec ./src/scripts/backfill-media-urls.ts"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.12.5",
