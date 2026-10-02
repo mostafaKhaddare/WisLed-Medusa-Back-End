@@ -20,6 +20,7 @@
     "media:upload": "medusa exec ./src/scripts/upload-media-to-sirv.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.556.0",
     "@medusajs/admin-sdk": "2.12.5",
     "@medusajs/admin-shared": "2.12.5",
     "@medusajs/cli": "2.12.5",
