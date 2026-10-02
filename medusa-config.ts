@@ -70,12 +70,21 @@ const isStorageConfigured =
 
 if (isStorageConfigured) {
   console.log('✅ Object storage enabled');
+
+  // Sirv does not implement S3 bucket ACLs, but @medusajs/file-s3 attaches an
+  // ACL to every upload, which Sirv rejects with
+  // AccessControlListNotSupported. That surfaces as a 500 on
+  // POST /admin/uploads, and the file row has already been created by then, so
+  // each failed attempt also leaves an image record with no url. The local
+  // provider drops the header; every other provider keeps the stock behaviour.
+  const isSirv = (process.env.DO_SPACE_ENDPOINT ?? '').includes('sirv');
+
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
     options: {
       providers: [
         {
-          resolve: '@medusajs/file-s3',
+          resolve: isSirv ? './src/providers/acl-free-s3' : '@medusajs/file-s3',
           id: 's3',
           options: {
             file_url: process.env.DO_SPACE_URL,
