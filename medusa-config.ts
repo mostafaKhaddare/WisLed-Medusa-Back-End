@@ -56,7 +56,11 @@ if (isStripeConfigured) {
   };
 }
 
-// ── DigitalOcean Spaces (S3) ──────────────────────────────────────────────────
+// ── Object storage (any S3-compatible provider) ────────────────────────────────
+// The DO_SPACE_* names are historical but the driver is provider-agnostic, so the
+// same variables target DigitalOcean Spaces, Backblaze B2 or Sirv. Only
+// DO_SPACE_URL (the public delivery host) and DO_SPACE_ENDPOINT (the S3 API
+// host) differ per provider.
 const isStorageConfigured =
   Boolean(process.env.DO_SPACE_URL) &&
   Boolean(process.env.DO_SPACE_ACCESS_KEY) &&
@@ -65,7 +69,7 @@ const isStorageConfigured =
   Boolean(process.env.DO_SPACE_REGION);
 
 if (isStorageConfigured) {
-  console.log('✅ DigitalOcean Spaces enabled');
+  console.log('✅ Object storage enabled');
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
     options: {
@@ -80,6 +84,13 @@ if (isStorageConfigured) {
             region: process.env.DO_SPACE_REGION,
             bucket: process.env.DO_SPACE_BUCKET,
             endpoint: process.env.DO_SPACE_ENDPOINT,
+            // Sirv (https://s3.sirv.com) only accepts path-style requests.
+            // AWS SDK v3 would otherwise build virtual-host URLs such as
+            // https://<bucket>.s3.sirv.com and fail DNS/Signature. Everything
+            // else (DigitalOcean, B2) works either way, so this stays opt-in.
+            additional_client_config: process.env.DO_SPACE_FORCE_PATH_STYLE === 'true'
+              ? { forcePathStyle: true }
+              : {},
           },
         },
       ],
