@@ -51,6 +51,9 @@ const APPLY = process.env.APPLY === '1'
 const SOURCE_DIR = process.env.SOURCE_DIR ?? join(process.cwd(), 'static')
 const PREFIX = process.env.PREFIX ?? ''
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 8)
+// Upload at most N files. Used to validate credentials and connectivity with a
+// single object before committing to the full transfer.
+const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : Infinity
 
 const CONTENT_TYPES: Record<string, string> = {
   '.jpg': 'image/jpeg',
@@ -117,12 +120,24 @@ async function collectImages(dir: string): Promise<string[]> {
   return out.sort()
 }
 
+// Distinguishing "absent" from "could not check" matters. If credentials are
+// wrong, HeadObject fails with AccessDenied rather than NoSuchKey, and treating
+// those the same would report every file as missing and then fail 565 uploads.
+let probeError: string | null = null
+
 async function exists(client: S3Client, bucket: string, key: string) {
   try {
     await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }))
     return true
-  } catch {
-    return false
+  } catch (e: any) {
+    const name = e?.name ?? ''
+    if (name === 'NoSuchKey' || name === 'NotFound' || e?.$metadata?.httpStatusCode === 404) {
+      return false
+    }
+    if (!probeError) {
+      probeError = e?.name ? `${e.name}: ${e.message}` : String(e)
+    }
+    throw e
   }
 }
 
@@ -132,7 +147,8 @@ async function main() {
     process.exit(1)
   }
 
-  const files = await collectImages(SOURCE_DIR)
+  const allFiles = await collectImages(SOURCE_DIR)
+  const files = allFiles.slice(0, Number.isFinite(LIMIT) ? LIMIT : allFiles.length)
   if (!files.length) {
     console.log(`\n❌ No images found under ${SOURCE_DIR}\n`)
     process.exit(1)
@@ -206,6 +222,12 @@ async function main() {
   })
   await Promise.all(workers)
 
+  if (probeError) {
+    console.log(`\n❌ Could not read the bucket: ${probeError}`)
+    console.log(`   Check SIRV_ACCESS_KEY / SIRV_SECRET_KEY / SIRV_BUCKET.\n`)
+    process.exit(1)
+  }
+
   console.log(`\n${APPLY ? 'Uploaded' : 'Would upload'} : ${uploaded}`)
   console.log(`Already present      : ${skipped}`)
   console.log(`Failed               : ${failed.length}`)
@@ -227,6 +249,10 @@ async function main() {
   }
   console.log()
 }
+
+// `medusa exec` requires the script to default-export a callable, so the entry
+// point is exported rather than only invoked at module scope.
+export default main
 
 main().catch((e) => {
   console.error(e)
