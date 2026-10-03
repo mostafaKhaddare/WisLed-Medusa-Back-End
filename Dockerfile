@@ -16,8 +16,12 @@ RUN apt-get update \
 # ---------------------------
 FROM base AS deps
 
+# The lockfile is honoured deliberately. With --frozen-lockfile=false the image
+# re-resolved every caret range at build time, so Render compiled whatever
+# versions happened to be published that day and the build broke on a
+# third-party type declaration rather than on anything in this repository.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc .pnpmfile.cjs ./
-RUN pnpm install --frozen-lockfile=false
+RUN pnpm install --frozen-lockfile
 
 # ---------------------------
 # build
@@ -44,6 +48,6 @@ WORKDIR /app/.medusa/server
 COPY --from=build /app/.medusa/server ./
 
 RUN printf "dangerouslyAllowAllBuilds=true\n" >> .npmrc \
-  && pnpm install --prod --frozen-lockfile=false
+  && pnpm install --prod --frozen-lockfile
 
 CMD ["pnpm", "start"]
