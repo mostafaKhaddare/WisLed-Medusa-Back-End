@@ -47,7 +47,12 @@ ENV NODE_ENV=production
 WORKDIR /app/.medusa/server
 COPY --from=build /app/.medusa/server ./
 
+# This stage deliberately does not use --frozen-lockfile. `medusa build` writes a
+# generated package.json into .medusa/server listing the 29 production
+# dependencies, and it does not emit a lockfile alongside it. The repository's
+# pnpm-lock.yaml does not match that generated manifest, so freezing here fails
+# with ERR_PNPM_OUTDATED_LOCKFILE. The deps stage above is the one that pins.
 RUN printf "dangerouslyAllowAllBuilds=true\n" >> .npmrc \
-  && pnpm install --prod --frozen-lockfile
+  && pnpm install --prod --frozen-lockfile=false
 
 CMD ["pnpm", "start"]
