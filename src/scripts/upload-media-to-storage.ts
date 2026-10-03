@@ -27,20 +27,15 @@ import { PutObjectCommand, S3Client, HeadObjectCommand } from '@aws-sdk/client-s
  *
  *   - Backblaze B2: no `DO_SPACE_ENDPOINT` needed; the SDK resolves it from the
  *     region. Public bucket, free egress.
- *   - Sirv: requires `DO_SPACE_ENDPOINT=https://s3.sirv.com`, and its CDN only
- *     serves files uploaded through its own web interface. Files written here
- *     store successfully but are rejected at request time by Sirv's imaging
- *     engine with "No image metadata available", so Sirv is not usable as the
- *     upload backend for Medusa.
+ *   - DigitalOcean Spaces: set DO_SPACE_ENDPOINT to the regional host.
  *
  * Safety properties
  * -----------------
  *   - Dry run by default. Set APPLY=1 to upload.
  *   - Skips objects already present in the bucket, so it is safe to rerun and
  *     will not re-transfer 199 MB on a second attempt.
- *   - Streams each file and sets ContentLength explicitly. Sirv's signature
- *     validation rejects the request when the SDK is free to choose its own
- *     payload encoding, which it does for in-memory bodies.
+ *   - Streams each file and sets ContentLength explicitly, so the SDK cannot
+ *     choose its own payload encoding.
  *   - Only image extensions are considered. The product export CSVs sitting in
  *     the same folder are deliberately skipped: they are not media, and they
  *     contain the full catalog.
@@ -89,18 +84,17 @@ interface Config {
  *
  * Reads the same `DO_SPACE_*` names the Medusa app itself uses, so the block can
  * be pasted verbatim from Render into a local `.env` and the two environments
- * cannot drift. The `SIRV_*` names are accepted as a fallback for older local
- * setups.
+ * cannot drift.
  *
  * `endpoint` is optional: omitting it lets the AWS SDK resolve the correct S3
  * endpoint from the region, which is what Backblaze B2 and AWS both want. It is
- * required for providers that are not AWS, such as Sirv at s3.sirv.com.
+ * required by providers that are not AWS.
  *
  * `forcePathStyle` defaults to on. Path-style URLs are accepted by B2 and are
- * mandatory for Sirv, so the default is the portable one.
+ * so the default is the portable one.
  */
 function readConfig(): Config | null {
-  const pick = (name: string) => process.env[`DO_SPACE_${name}`] || process.env[`SIRV_${name}`]
+  const pick = (name: string) => process.env[`DO_SPACE_${name}`]
 
   const cfg = {
     url: pick('URL')?.replace(/\/+$/, ''),
@@ -108,7 +102,7 @@ function readConfig(): Config | null {
     secretAccessKey: pick('SECRET_KEY'),
     bucket: pick('BUCKET'),
     region: pick('REGION'),
-    endpoint: process.env.DO_SPACE_ENDPOINT || process.env.SIRV_ENDPOINT,
+    endpoint: process.env.DO_SPACE_ENDPOINT,
   }
 
   const required = ['URL', 'ACCESS_KEY', 'SECRET_KEY', 'BUCKET', 'REGION'] as const
@@ -193,7 +187,7 @@ async function main() {
   console.log(`Public URL : ${cfg.url}`)
   console.log(`Mode       : ${APPLY ? 'APPLY' : 'DRY RUN (set APPLY=1 to upload)'}\n`)
 
-  // Path-style is accepted by Backblaze B2 and required by Sirv, so it stays on
+  // Path-style is accepted by Backblaze B2 and DigitalOcean, so it stays on
   // unless a provider is known to need virtual-host style.
   const forcePathStyle = process.env.DO_SPACE_FORCE_PATH_STYLE !== 'false'
 
@@ -211,8 +205,8 @@ async function main() {
   let skipped = 0
   const failed: { key: string; error: string }[] = []
 
-  // No ACL is set on purpose. Sirv does not support S3 bucket ACLs and rejects
-  // the header that @medusajs/file-s3 attaches to its own uploads.
+  // No ACL is set on purpose, so the upload behaves the same on providers that
+  // reject per-object ACLs and on those that ignore them.
   const runOne = async (file: string, size: number) => {
     const key = `${PREFIX}${basename(file)}`
     try {
@@ -239,7 +233,7 @@ async function main() {
     }
   }
 
-  // Small bounded pool. Sirv is a CDN rather than a bulk-transfer target, so
+  // Small bounded pool. The target is a CDN rather than a bulk-transfer host, so
   // this deliberately stays modest instead of saturating the connection.
   const queue = files.map((file, i) => ({ file, size: sizes[i] }))
   const workers = Array.from({ length: Math.min(CONCURRENCY, files.length) }, async () => {
@@ -254,7 +248,7 @@ async function main() {
 
   if (probeError) {
     console.log(`\n❌ Could not read the bucket: ${probeError}`)
-    console.log(`   Check SIRV_ACCESS_KEY / SIRV_SECRET_KEY / SIRV_BUCKET.\n`)
+    console.log(`   Check DO_SPACE_ACCESS_KEY / DO_SPACE_SECRET_KEY / DO_SPACE_BUCKET.\n`)
     process.exit(1)
   }
 

@@ -56,11 +56,7 @@ if (isStripeConfigured) {
   };
 }
 
-// ── Object storage (any S3-compatible provider) ────────────────────────────────
-// The DO_SPACE_* names are historical but the driver is provider-agnostic, so the
-// same variables target DigitalOcean Spaces, Backblaze B2 or Sirv. Only
-// DO_SPACE_URL (the public delivery host) and DO_SPACE_ENDPOINT (the S3 API
-// host) differ per provider.
+// ── DigitalOcean Spaces (S3) ──────────────────────────────────────────────────
 const isStorageConfigured =
   Boolean(process.env.DO_SPACE_URL) &&
   Boolean(process.env.DO_SPACE_ACCESS_KEY) &&
@@ -69,38 +65,13 @@ const isStorageConfigured =
   Boolean(process.env.DO_SPACE_REGION);
 
 if (isStorageConfigured) {
-  console.log('✅ Object storage enabled');
-
-  // `@medusajs/file-s3` attaches an object ACL to every upload:
-  //
-  //   s3-file.js:84   ACL: file.access === 'public' ? 'public-read' : 'private'
-  //
-  // Backblaze B2 and Sirv both reject that header with
-  // AccessControlListNotSupported, which surfaces as a 500 on
-  // POST /admin/uploads. Because the upload workflow creates the file row before
-  // calling storage, each rejected attempt also leaves an image record with no
-  // url, which then blocks saving the product.
-  //
-  // This bucket is public and objects are served straight off DO_SPACE_URL, so
-  // there is no per-object permission state for an ACL to set. AWS is the only
-  // provider where ACLs are meaningful, so they are kept there and dropped
-  // everywhere else.
-  const isAwsEndpoint = (process.env.DO_SPACE_ENDPOINT ?? '').includes('amazonaws.com');
-  const stripAcl =
-    process.env.DO_SPACE_STRIP_ACL === 'true' ||
-    (!process.env.DO_SPACE_ENDPOINT && process.env.DO_SPACE_REGION?.startsWith('us-')) ||
-    !isAwsEndpoint;
-
-  if (stripAcl) {
-    console.log('   file provider: acl-free (object ACLs unsupported by this endpoint)');
-  }
-
+  console.log('✅ DigitalOcean Spaces enabled');
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
     options: {
       providers: [
         {
-          resolve: stripAcl ? './src/providers/acl-free-s3' : '@medusajs/file-s3',
+          resolve: '@medusajs/file-s3',
           id: 's3',
           options: {
             file_url: process.env.DO_SPACE_URL,
@@ -109,12 +80,6 @@ if (isStorageConfigured) {
             region: process.env.DO_SPACE_REGION,
             bucket: process.env.DO_SPACE_BUCKET,
             endpoint: process.env.DO_SPACE_ENDPOINT,
-            // Sirv (https://s3.sirv.com) only accepts path-style requests. B2 and
-            // DigitalOcean accept either style, so this stays opt-in and only
-            // matters for providers that are not AWS.
-            additional_client_config: process.env.DO_SPACE_FORCE_PATH_STYLE === 'true'
-              ? { forcePathStyle: true }
-              : {},
           },
         },
       ],
