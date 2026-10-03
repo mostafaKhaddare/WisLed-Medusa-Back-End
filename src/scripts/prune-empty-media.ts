@@ -108,9 +108,3 @@ export default async function pruneEmptyMedia({ container }: ExecArgs): Promise<
   logger.info(`[prune] deleted ${deleted} image row(s)`)
   logger.info('[prune] done. The affected products can now be saved again.')
 }
-
-declare module '@medusajs/framework/types' {
-  interface ExecArgs {
-    container: any
-  }
-}
