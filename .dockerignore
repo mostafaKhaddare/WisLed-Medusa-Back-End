@@ -17,7 +17,3 @@ coverage
 *.tsbuildinfo
 .vscode
 .idea
-# Product media recovered from the old local-disk provider. ~565 files / 199 MB.
-# Needed only by `pnpm run media:upload`, never by the image build, and tracked
-# in git so nothing is lost by excluding it here.
-static

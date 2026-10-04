@@ -16,12 +16,8 @@ RUN apt-get update \
 # ---------------------------
 FROM base AS deps
 
-# The lockfile is honoured deliberately. With --frozen-lockfile=false the image
-# re-resolved every caret range at build time, so Render compiled whatever
-# versions happened to be published that day and the build broke on a
-# third-party type declaration rather than on anything in this repository.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc .pnpmfile.cjs ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile=false
 
 # ---------------------------
 # build
@@ -47,11 +43,6 @@ ENV NODE_ENV=production
 WORKDIR /app/.medusa/server
 COPY --from=build /app/.medusa/server ./
 
-# This stage deliberately does not use --frozen-lockfile. `medusa build` writes a
-# generated package.json into .medusa/server listing the 29 production
-# dependencies, and it does not emit a lockfile alongside it. The repository's
-# pnpm-lock.yaml does not match that generated manifest, so freezing here fails
-# with ERR_PNPM_OUTDATED_LOCKFILE. The deps stage above is the one that pins.
 RUN printf "dangerouslyAllowAllBuilds=true\n" >> .npmrc \
   && pnpm install --prod --frozen-lockfile=false
 

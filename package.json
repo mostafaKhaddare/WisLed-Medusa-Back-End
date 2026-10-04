@@ -15,13 +15,9 @@
     "db:rollback": "medusa db:rollback",
     "db:sync-links": "medusa db:sync-links --execute-all",
     "db:migrate": "medusa db:migrate",
-    "db:seed": "medusa exec ./src/scripts/seed.ts",
-    "media:backfill": "medusa exec ./src/scripts/backfill-media-urls.ts",
-    "media:upload": "medusa exec ./src/scripts/upload-media-to-storage.ts",
-    "media:prune": "medusa exec ./src/scripts/prune-empty-media.ts"
+    "db:seed": "medusa exec ./src/scripts/seed.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.556.0",
     "@medusajs/admin-sdk": "2.12.5",
     "@medusajs/admin-shared": "2.12.5",
     "@medusajs/cli": "2.12.5",

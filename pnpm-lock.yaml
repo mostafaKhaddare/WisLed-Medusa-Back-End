@@ -10,9 +10,6 @@ importers:
 
   .:
     dependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.556.0
-        version: 3.1004.0
       '@medusajs/admin-sdk':
         specifier: 2.12.5
         version: 2.12.5
