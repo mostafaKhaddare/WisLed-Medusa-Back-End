@@ -92,10 +92,48 @@ const isAwsEndpoint = (endpoint?: string): boolean => {
   }
 };
 
+/**
+ * Ensure the public base URL actually addresses the bucket.
+ *
+ * `file_url` is the prefix the File Module stores in `product_image.url`, so a
+ * value without the bucket in it produces urls that address the account, not the
+ * bucket: `https://s3.eu-central-003.backblazeb2.com/photo-01ABC.jpg` instead of
+ * `.../wisled-media/photo-01ABC.jpg`. Uploads still succeed, because the bucket
+ * travels separately in the PutObject command, so the mistake stays invisible
+ * until an image is requested — where it fails as a 404 on a url that looks
+ * correct. Both B2 layouts are accepted:
+ *
+ *   https://s3.<region>.backblazeb2.com/<bucket>       S3 API endpoint
+ *   https://f00X.backblazeb2.com/file/<bucket>          native download host
+ */
+const withBucketPath = (value: string, bucket: string): string => {
+  const trimmed = value.replace(/\/+$/, '')
+  let url: URL
+
+  try {
+    url = new URL(trimmed)
+  } catch {
+    throw new Error(
+      `DO_SPACE_URL is not a valid URL: "${trimmed}". It must be the https ` +
+        `address the bucket's files are served from.`
+    )
+  }
+
+  const segments = url.pathname.split('/').filter(Boolean)
+
+  // Already scoped to the bucket, in either layout.
+  if (segments[segments.length - 1] === bucket || segments.includes(bucket)) {
+    return trimmed
+  }
+
+  url.pathname = `/${[...segments, bucket].join('/')}`
+  return url.toString().replace(/\/+$/, '')
+}
+
 if (isStorageConfigured) {
   const bucket = process.env.DO_SPACE_BUCKET as string;
   const region = process.env.DO_SPACE_REGION as string;
-  const publicBaseUrl = (process.env.DO_SPACE_URL as string).replace(/\/+$/, '');
+  const publicBaseUrl = withBucketPath(process.env.DO_SPACE_URL as string, bucket);
   const configuredEndpoint = process.env.DO_SPACE_ENDPOINT;
 
   /**
@@ -121,6 +159,28 @@ if (isStorageConfigured) {
       `DO_SPACE_URL must be an https:// URL. Refusing to boot, because a plain ` +
         `http:// public URL makes every stored product image fail as mixed content. ` +
         `Got a value starting with "${publicBaseUrl.slice(0, 12)}".`
+    );
+  }
+
+  /**
+   * The S3 API endpoint is a signing host, not a delivery host.
+   *
+   * Backblaze authenticates every request that reaches `s3.<region>.backblazeb2.com`,
+   * including reads from a bucket marked public, so a url built on that host is
+   * not fetchable by a browser without a signature — and the File Module stores
+   * unsigned urls. Anonymous reads work on the native download host
+   * (`https://f00X.backblazeb2.com/file/<bucket>/<key>`) or on a custom domain
+   * mapped to the bucket. This is a warning rather than a throw because it is
+   * bucket-configuration dependent: verify with an unauthenticated HEAD before
+   * assuming the images are fine.
+   */
+  if (/^s3\.[^.]+\.backblazeb2\.com$/i.test(new URL(publicBaseUrl).hostname)) {
+    console.warn(
+      `⚠️  DO_SPACE_URL points at the B2 S3 API host (${new URL(publicBaseUrl).hostname}). ` +
+        `Backblaze authenticates every request to that host, so image urls stored from it ` +
+        `may not load in a browser. Prefer the bucket's public download host, ` +
+        `https://f00X.backblazeb2.com/file/${bucket}, or a custom domain. Verify with: ` +
+        `curl -I ${publicBaseUrl}/<file>`
     );
   }
 
