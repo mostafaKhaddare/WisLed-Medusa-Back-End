@@ -16,7 +16,8 @@
     "db:sync-links": "medusa db:sync-links --execute-all",
     "db:migrate": "medusa db:migrate",
     "db:seed": "medusa exec ./src/scripts/seed.ts",
-    "media:prune": "medusa exec ./src/scripts/prune-empty-media.ts"
+    "media:prune": "medusa exec ./src/scripts/prune-empty-media.ts",
+    "media:image": "medusa exec ./src/scripts/set-image-url.ts"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.12.5",
