@@ -64,7 +64,53 @@ const isStorageConfigured =
   Boolean(process.env.S3_BUCKET) &&
   Boolean(process.env.S3_REGION);
 
+/**
+ * Ensure the public base URL actually addresses the bucket.
+ *
+ * Medusa stores `file_url + "/" + filename` in `product_image.url`, so a value
+ * without the bucket in it produces urls that address the project root instead
+ * of the bucket:
+ *
+ *   https://cvfukgixcjzehsotczko.supabase.co/CREATE%20LIKE%20THIS%20WITHOUTWATERMARK.png
+ *
+ * which 404s, while the file actually lives at:
+ *
+ *   https://cvfukgixcjzehsotczko.supabase.co/storage/v1/object/public/Wisled_bucket_medusa/CREATE%20LIKE%20THIS%20WITHOUTWATERMARK.png
+ *
+ * Uploads still succeed, because the bucket travels separately in the
+ * PutObject command, so the omission is invisible until an image is
+ * requested — and the broken url looks plausible enough to read as a
+ * permissions problem rather than a missing path segment.
+ *
+ * The bucket is appended when it is absent. A value that already names it is
+ * left exactly as it is, so an explicitly correct setting is never rewritten.
+ */
+const withBucketPath = (value, bucket) => {
+  const trimmed = value.replace(/\/+$/, '')
+  let url
+
+  try {
+    url = new URL(trimmed)
+  } catch {
+    throw new Error(
+      `S3_FILE_URL is not a valid URL: "${trimmed}". It must be the https ` +
+        `address the bucket's files are served from.`
+    )
+  }
+
+  const segments = url.pathname.split('/').filter(Boolean)
+
+  if (segments[segments.length - 1] === bucket || segments.includes(bucket)) {
+    return trimmed
+  }
+
+  url.pathname = '/' + [...segments, bucket].join('/')
+  return url.toString().replace(/\/+$/, '')
+}
+
 if (isStorageConfigured) {
+  const bucket = process.env.S3_BUCKET;
+  const publicBaseUrl = withBucketPath(process.env.S3_FILE_URL, bucket);
   console.log('✅ Supabase Storage enabled');
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
@@ -81,7 +127,7 @@ if (isStorageConfigured) {
           resolve: './src/providers/acl-free-s3',
           id: 's3',
           options: {
-            file_url: process.env.S3_FILE_URL,
+            file_url: publicBaseUrl,
             access_key_id: process.env.S3_ACCESS_KEY_ID,
             secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
             region: process.env.S3_REGION,
