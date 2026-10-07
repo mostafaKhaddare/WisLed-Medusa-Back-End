@@ -56,37 +56,50 @@ if (isStripeConfigured) {
   };
 }
 
-// ── DigitalOcean Spaces (S3) ──────────────────────────────────────────────────
+// ── Object storage: Supabase Storage (S3-compatible) ──────────────────────────
 const isStorageConfigured =
-  Boolean(process.env.DO_SPACE_URL) &&
-  Boolean(process.env.DO_SPACE_ACCESS_KEY) &&
-  Boolean(process.env.DO_SPACE_SECRET_KEY) &&
-  Boolean(process.env.DO_SPACE_BUCKET) &&
-  Boolean(process.env.DO_SPACE_REGION);
+  Boolean(process.env.S3_FILE_URL) &&
+  Boolean(process.env.S3_ACCESS_KEY_ID) &&
+  Boolean(process.env.S3_SECRET_ACCESS_KEY) &&
+  Boolean(process.env.S3_BUCKET) &&
+  Boolean(process.env.S3_REGION);
 
 if (isStorageConfigured) {
-  console.log('✅ DigitalOcean Spaces enabled');
+  console.log('✅ Supabase Storage enabled');
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
     options: {
       providers: [
         {
-          resolve: '@medusajs/file-s3',
+          /**
+           * Supabase Storage does not support per-object ACLs — its S3
+           * compatibility table lists `x-amz-acl` under unsupported features.
+           * `@medusajs/file-s3` sends one on every upload, which is exactly the
+           * 500 on POST /admin/uploads. The wrapper strips it from the command
+           * before it is serialized, so it is never generated at all.
+           */
+          resolve: './src/providers/acl-free-s3',
           id: 's3',
           options: {
-            file_url: process.env.DO_SPACE_URL,
-            access_key_id: process.env.DO_SPACE_ACCESS_KEY,
-            secret_access_key: process.env.DO_SPACE_SECRET_KEY,
-            region: process.env.DO_SPACE_REGION,
-            bucket: process.env.DO_SPACE_BUCKET,
-            endpoint: process.env.DO_SPACE_ENDPOINT,
+            file_url: process.env.S3_FILE_URL,
+            access_key_id: process.env.S3_ACCESS_KEY_ID,
+            secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+            region: process.env.S3_REGION,
+            bucket: process.env.S3_BUCKET,
+            endpoint: process.env.S3_ENDPOINT,
+            /**
+             * Required. Supabase's own S3 examples set forcePathStyle: true,
+             * and the endpoint is not a real AWS host, so the SDK must not try
+             * to derive a virtual-hosted URL from the bucket name.
+             */
+            additional_client_config: { forcePathStyle: true },
           },
         },
       ],
     },
   };
 } else if (!isProduction) {
-  console.warn('⚠️  DO Space vars missing — using local file storage');
+  console.warn('⚠️  S3 vars missing — using local file storage');
 }
 
 // ── Resend (Email) ────────────────────────────────────────────────────────────
