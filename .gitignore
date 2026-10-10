@@ -2,13 +2,16 @@
 node_modules/
 
 # Environment
+# `.env*` must precede the negation, otherwise it re-matches `.env.example`
+# and the example never gets committed. Order matters in gitignore.
 .env
 .env.local
 .env.production
-!.env.example
 .env*
+!.env.example
 secrets*
 start_log*
+*.log
 
 # Medusa / build outputs
 .medusa/
