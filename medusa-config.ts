@@ -57,12 +57,25 @@ if (isStripeConfigured) {
 }
 
 // ── Object storage: Supabase Storage (S3-compatible) ──────────────────────────
-const isStorageConfigured =
-  Boolean(process.env.S3_FILE_URL) &&
-  Boolean(process.env.S3_ACCESS_KEY_ID) &&
-  Boolean(process.env.S3_SECRET_ACCESS_KEY) &&
-  Boolean(process.env.S3_BUCKET) &&
-  Boolean(process.env.S3_REGION);
+/**
+ * Resolve a storage setting from either naming scheme.
+ *
+ * `render.yaml` declares the `DO_SPACE_*` names, while this config was written
+ * against `S3_*` when storage moved to Supabase. Render stores the values in
+ * its dashboard under those declared names, so only one of the two sets is ever
+ * populated. Reading both keeps either deployment working, and a value that is
+ * already correct under the preferred name is never overridden by the fallback.
+ */
+const pickStorageVar = (preferred: string, legacy: string) =>
+  process.env[preferred] || process.env[legacy] || undefined
+
+const isStorageConfigured = Boolean(
+  pickStorageVar('S3_FILE_URL', 'DO_SPACE_URL') &&
+    pickStorageVar('S3_ACCESS_KEY_ID', 'DO_SPACE_ACCESS_KEY') &&
+    pickStorageVar('S3_SECRET_ACCESS_KEY', 'DO_SPACE_SECRET_KEY') &&
+    pickStorageVar('S3_BUCKET', 'DO_SPACE_BUCKET') &&
+    pickStorageVar('S3_REGION', 'DO_SPACE_REGION')
+);
 
 /**
  * Ensure the public base URL actually addresses the bucket.
@@ -109,9 +122,10 @@ const withBucketPath = (value, bucket) => {
 }
 
 if (isStorageConfigured) {
-  const bucket = process.env.S3_BUCKET;
-  const publicBaseUrl = withBucketPath(process.env.S3_FILE_URL, bucket);
-  console.log('✅ Supabase Storage enabled');
+  const bucket = pickStorageVar('S3_BUCKET', 'DO_SPACE_BUCKET') as string
+  const fileUrl = pickStorageVar('S3_FILE_URL', 'DO_SPACE_URL') as string
+  const publicBaseUrl = withBucketPath(fileUrl, bucket)
+  console.log('✅ Supabase Storage enabled')
   dynamicModules[Modules.FILE] = {
     resolve: '@medusajs/medusa/file',
     options: {
@@ -128,11 +142,14 @@ if (isStorageConfigured) {
           id: 's3',
           options: {
             file_url: publicBaseUrl,
-            access_key_id: process.env.S3_ACCESS_KEY_ID,
-            secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-            region: process.env.S3_REGION,
-            bucket: process.env.S3_BUCKET,
-            endpoint: process.env.S3_ENDPOINT,
+            access_key_id: pickStorageVar('S3_ACCESS_KEY_ID', 'DO_SPACE_ACCESS_KEY'),
+            secret_access_key: pickStorageVar(
+              'S3_SECRET_ACCESS_KEY',
+              'DO_SPACE_SECRET_KEY'
+            ),
+            region: pickStorageVar('S3_REGION', 'DO_SPACE_REGION'),
+            bucket,
+            endpoint: pickStorageVar('S3_ENDPOINT', 'DO_SPACE_ENDPOINT'),
             /**
              * Required. Supabase's own S3 examples set forcePathStyle: true,
              * and the endpoint is not a real AWS host, so the SDK must not try
