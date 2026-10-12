@@ -5,7 +5,7 @@
   "author": "Medusa (https://medusajs.com)",
   "license": "MIT",
   "scripts": {
-    "add:admin": "NODE_ENV=development medusa exec ./src/scripts/add-admin.ts",
+    "add:admin": "medusa exec ./src/scripts/create-admin.ts",
     "build": "medusa build",
     "cloud:build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
