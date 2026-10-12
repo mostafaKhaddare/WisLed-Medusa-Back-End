@@ -15,6 +15,22 @@ import { StoreSearchProductsParamsType } from "./validators";
    6. Ranking                   — ts_rank * boost for exact prefix matches
    ============================================================================ */
 
+// ── Metadata facets (LED specs) ─────────────────────────────────────
+// Medusa has no columns for LED specs, so they live in
+// product.metadata (JSONB). A value may be stored as a scalar
+// ("IP65"), a number (10) or an array (["2200K","3000K"]), so
+// each selected value matches either the text projection (covers
+// scalars and numbers) or JSONB containment (covers arrays).
+const METADATA_FACETS = [
+  "color_temperature",
+  "wattage",
+  "ip_rating",
+  "voltage",
+  "product_type",
+  "strip_width",
+  "profile",
+] as const;
+
 export const GET = async (
   req: MedusaRequest<StoreSearchProductsParamsType>,
   res: MedusaResponse
@@ -110,6 +126,7 @@ class SearchEngine {
   ) {
     this.buildBaseQuery(params.currency_code, params.q, select);
     this.applyFiltering(params);
+    this.applyMetadataFilters(params);
     this.applySorting(params);
     this.applyPagination(params);
 
@@ -217,6 +234,29 @@ class SearchEngine {
 
     if (price_to) {
       this.#qb.andWhere("price_data.max_price", "<=", price_to);
+    }
+  }
+
+  // ── Metadata facet filtering ───────────────────────────────────────
+  // One facet at a time: values inside a facet are OR-ed (any selected
+  // value matches), facets are AND-ed against each other. The key comes
+  // from the METADATA_FACETS whitelist, values are bound parameters.
+  private applyMetadataFilters(params: StoreSearchProductsParamsType) {
+    for (const key of METADATA_FACETS) {
+      const values = params[key];
+      if (!values || values.length === 0) continue;
+
+      this.#qb.where((outer) => {
+        for (const value of values) {
+          outer.orWhere((inner) => {
+            inner
+              .whereRaw("product.metadata ->> ? = ?", [key, value])
+              .orWhereRaw("product.metadata @> ?::jsonb", [
+                JSON.stringify({ [key]: value }),
+              ]);
+          });
+        }
+      });
     }
   }
 
