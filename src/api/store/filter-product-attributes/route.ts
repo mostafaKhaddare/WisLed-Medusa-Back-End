@@ -67,17 +67,22 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   if (categoryId) {
     productQuery = productQuery.whereExists(function () {
       this.select(1)
-        .from("product_product_category")
+        // Medusa's product <-> product_category pivot table. The name is
+        // defined by the product module migration as
+        // `product_category_product` (see @medusajs/product InitialSetup);
+        // getting it wrong makes this route throw and the storefront loses
+        // its filter facets.
+        .from("product_category_product")
         .whereRaw(
-          "product_product_category.product_id = product.id"
+          "product_category_product.product_id = product.id"
         )
-        .whereIn("product_product_category.product_category_id", [
+        .whereIn("product_category_product.product_category_id", [
           categoryId,
         ]);
     });
   }
 
-  const [collection, type, material, metadataRows] = await Promise.all([
+  const [collection, type, materialRows, metadataRows] = await Promise.all([
     knex("product_collection")
       .select("id", "title as value")
       .whereNull("deleted_at"),
@@ -109,7 +114,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   res.json({
     collection,
     type,
-    material: material.map((v: string) => ({ id: v, value: v })),
+    // `knex("product").distinct("material")` returns rows shaped
+    // `{ material: "LED" }`, so read the column rather than the row.
+    material: materialRows.map((row: { material: string }) => ({
+      id: row.material,
+      value: row.material,
+    })),
     // The frontend reads these with `?.` and defaults to an empty list, so a
     // category with no tagged products yields an empty facet rather than a
     // filter group that silently returns nothing.
