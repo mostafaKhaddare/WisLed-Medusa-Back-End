@@ -225,7 +225,7 @@ class SearchEngine {
     if (price_from) {
       this.#qb.where(
         this.#connection.raw(
-          "COALESCE(price_data.sale_price, price_data.regular_price)"
+          "COALESCE(price_data.sale_price, price_data.regular_price, price_data.any_price)"
         ),
         ">=",
         price_from
@@ -272,6 +272,15 @@ class SearchEngine {
           this.#connection.raw(
             "MIN(CASE WHEN price.price_list_id IS NULL THEN price.amount END) AS regular_price"
           ),
+          // Every in-currency price of the product, whatever list it hangs
+          // off. `regular_price` deliberately skips prices stored on a price
+          // list, and `sale_price` only recognises lists of type 'sale', so a
+          // variant priced exclusively through another list (type 'override')
+          // resolved both aggregates to NULL and the card rendered "0.00"
+          // even though the admin showed a real price. This is only used as
+          // the final COALESCE argument, so any product that already resolves
+          // keeps the exact price it had before.
+          this.#connection.raw("MIN(price.amount) AS any_price"),
           this.#connection.raw("MAX(price.amount) AS max_price")
         )
           .from("product_variant")
@@ -285,17 +294,16 @@ class SearchEngine {
             "price_set.id",
             "product_variant_price_set.price_set_id"
           )
-          .innerJoin("price", function () {
-            this.on("price.price_set_id", "=", "price_set.id").andOnIn(
-              "price.currency_code",
-              [currencyCode]
-            );
-          })
+          .innerJoin("price", "price.price_set_id", "price_set.id")
           .leftJoin("price_list", "price_list.id", "price.price_list_id")
           .whereNull("product_variant.deleted_at")
           .whereNull("product_variant_price_set.deleted_at")
           .whereNull("price_set.deleted_at")
           .whereNull("price.deleted_at")
+          // Compare case-insensitively: a price row written as 'MAD' can never
+          // match a region currency of 'mad' with an exact match, which
+          // silently empties the price for an otherwise priced product.
+          .whereRaw("LOWER(price.currency_code) = LOWER(?)", [currencyCode])
           .groupBy("product_variant.product_id");
       })
       .select(
@@ -303,7 +311,7 @@ class SearchEngine {
         "price_data.regular_price",
         "price_data.sale_price",
         this.#connection.raw(
-          "COALESCE(price_data.sale_price, price_data.regular_price) AS calculated_price"
+          "COALESCE(price_data.sale_price, price_data.regular_price, price_data.any_price) AS calculated_price"
         ),
         this.#connection.raw("COUNT(*) OVER() AS total_count")
       )
