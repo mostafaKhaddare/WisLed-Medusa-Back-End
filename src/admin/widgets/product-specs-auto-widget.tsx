@@ -97,7 +97,7 @@ const ProductSpecsAutoWidget = ({ data: product }: DetailWidgetProps<AdminProduc
 };
 
 export const config = defineWidgetConfig({
-  zone: "product.details.after",
+  zone: ["product.details.after", "product.details.before"],
 });
 
 export default ProductSpecsAutoWidget;

@@ -167,7 +167,7 @@ const ProductSpecsPasteWidget = ({ data: product }: DetailWidgetProps<AdminProdu
 };
 
 export const config = defineWidgetConfig({
-  zone: "product.details.after",
+  zone: ["product.details.after"],
 });
 
 export default ProductSpecsPasteWidget;
