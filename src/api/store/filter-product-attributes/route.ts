@@ -189,13 +189,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   ]);
 
   // One pass over the metadata rows collects distinct values for every facet.
+  const baseKey = (k: string) => (k.startsWith("spec_") ? k.slice(5) : k);
   const found: Record<string, Set<string>> = {};
   for (const row of metadataRows) {
     const metadata = (row.metadata ?? {}) as Record<string, unknown>;
-    for (const { key } of FACETS) {
-      for (const value of toArray(metadata[key])) {
-        found[key] ??= new Set();
-        found[key].add(value);
+    for (const [mkey, mval] of Object.entries(metadata)) {
+      const b = baseKey(mkey);
+      for (const { key } of FACETS) {
+        if (key === b || key === mkey) {
+          for (const value of toArray(mval)) {
+            found[key] ??= new Set();
+            found[key].add(value);
+          }
+        }
       }
     }
   }
