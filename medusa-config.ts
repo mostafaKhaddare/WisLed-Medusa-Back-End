@@ -56,6 +56,41 @@ if (isStripeConfigured) {
   };
 }
 
+// ── PayPal ────────────────────────────────────────────────────────────────────
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+const paypalClientSecret = process.env.PAYPAL_CLIENT_SECRET;
+const isPayPalConfigured = Boolean(paypalClientId) && Boolean(paypalClientSecret);
+
+if (isPayPalConfigured) {
+  console.log('✅ PayPal enabled');
+  dynamicModules[Modules.PAYMENT] = {
+    resolve: '@medusajs/medusa/payment',
+    options: {
+      providers: [
+        {
+          resolve: './src/modules/paypal',
+          id: 'paypal',
+          options: {
+            client_id: paypalClientId,
+            client_secret: paypalClientSecret,
+            environment: process.env.PAYPAL_ENVIRONMENT || 'sandbox',
+            autoCapture: process.env.PAYPAL_AUTO_CAPTURE === 'true',
+            webhook_id: process.env.PAYPAL_WEBHOOK_ID,
+          },
+        },
+        {
+          resolve: '@medusajs/medusa/payment-stripe',
+          id: 'stripe',
+          options: {
+            apiKey: stripeApiKey,
+            webhookSecret: stripeWebhookSecret,
+          },
+        },
+      ],
+    },
+  };
+}
+
 // ── Object storage: Supabase Storage (S3-compatible) ──────────────────────────
 /**
  * Resolve a storage setting from either naming scheme.
