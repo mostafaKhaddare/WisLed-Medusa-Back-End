@@ -51,6 +51,10 @@ if (isStripeConfigured) {
             webhookSecret: stripeWebhookSecret,
           },
         },
+        {
+          resolve: '@medusajs/medusa/payment-manual',
+          id: 'manual',
+        },
       ],
     },
   };
@@ -280,3 +284,4 @@ module.exports = defineConfig({
     ...dynamicModules,
   },
 });
+
