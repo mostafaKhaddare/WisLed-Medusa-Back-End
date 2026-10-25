@@ -5,7 +5,7 @@ import WishlistModuleService from "../../../../../modules/wishlist/service";
 import { WISHLIST_MODULE } from "../../../../../modules/wishlist";
 
 import { MedusaError } from "@medusajs/framework/utils";
-
+// get function
 export async function GET(
   req: MedusaRequest,
 
