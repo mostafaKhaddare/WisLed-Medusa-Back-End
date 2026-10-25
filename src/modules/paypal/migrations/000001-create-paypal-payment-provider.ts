@@ -1,2 +1,0 @@
--- empty stub migration
--- Run `medusa db:migrate` to generate initial migrations for this module

@@ -33,6 +33,7 @@
     "@mikro-orm/knex": "6.4.16",
     "@mikro-orm/migrations": "6.4.16",
     "@mikro-orm/core": "6.4.16",
+    "@paypal/paypal-server-sdk": "^1.1.0",
     "@react-email/components": "1.0.4",
     "@tanstack/react-query": "5.64.2",
     "@medusajs/icons": "2.12.5",

@@ -719,7 +719,7 @@ class PayPalPaymentProviderService extends AbstractPaymentProvider<Options> {
         
         case "PAYMENT.CAPTURE.COMPLETED":
           return {
-            action: "successful",
+            action: "captured",
             data: payloadData,
           }
 
