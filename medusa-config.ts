@@ -32,68 +32,62 @@ const parseCors = (value) =>
 
 const dynamicModules = {};
 
-// ── Stripe ────────────────────────────────────────────────────────────────────
+// ── Payment providers ─────────────────────────────────────────────────────────
+// Medusa always registers the built-in `pp_system_default` provider. It is the
+// provider used for cash on delivery ("Paiement à la livraison"): the payment is
+// authorised immediately and collected when the order is delivered.
+//
+// Stripe and PayPal are additive. Earlier versions assigned
+// `dynamicModules[Modules.PAYMENT]` twice and registered a non-existent
+// `@medusajs/medusa/payment-manual` provider, which either hid COD or crashed
+// startup when Stripe was configured.
 const stripeApiKey = process.env.STRIPE_API_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const isStripeConfigured = Boolean(stripeApiKey) && Boolean(stripeWebhookSecret);
+const isStripeConfigured =
+  Boolean(stripeApiKey) && Boolean(stripeWebhookSecret);
+
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+const paypalClientSecret = process.env.PAYPAL_CLIENT_SECRET;
+const isPayPalConfigured =
+  Boolean(paypalClientId) && Boolean(paypalClientSecret);
+
+const paymentProviders = [];
 
 if (isStripeConfigured) {
   console.log('✅ Stripe enabled');
-  dynamicModules[Modules.PAYMENT] = {
-    resolve: '@medusajs/medusa/payment',
+  paymentProviders.push({
+    resolve: '@medusajs/medusa/payment-stripe',
+    id: 'stripe',
     options: {
-      providers: [
-        {
-          resolve: '@medusajs/medusa/payment-stripe',
-          id: 'stripe',
-          options: {
-            apiKey: stripeApiKey,
-            webhookSecret: stripeWebhookSecret,
-          },
-        },
-        {
-          resolve: '@medusajs/medusa/payment-manual',
-          id: 'manual',
-        },
-      ],
+      apiKey: stripeApiKey,
+      webhookSecret: stripeWebhookSecret,
     },
-  };
+  });
 }
-
-// ── PayPal ────────────────────────────────────────────────────────────────────
-const paypalClientId = process.env.PAYPAL_CLIENT_ID;
-const paypalClientSecret = process.env.PAYPAL_CLIENT_SECRET;
-const isPayPalConfigured = Boolean(paypalClientId) && Boolean(paypalClientSecret);
 
 if (isPayPalConfigured) {
   console.log('✅ PayPal enabled');
+  paymentProviders.push({
+    resolve: './src/modules/paypal',
+    id: 'paypal',
+    options: {
+      client_id: paypalClientId,
+      client_secret: paypalClientSecret,
+      environment: process.env.PAYPAL_ENVIRONMENT || 'sandbox',
+      autoCapture: process.env.PAYPAL_AUTO_CAPTURE === 'true',
+      webhook_id: process.env.PAYPAL_WEBHOOK_ID,
+    },
+  });
+}
+
+if (paymentProviders.length) {
   dynamicModules[Modules.PAYMENT] = {
     resolve: '@medusajs/medusa/payment',
-    options: {
-      providers: [
-        {
-          resolve: './src/modules/paypal',
-          id: 'paypal',
-          options: {
-            client_id: paypalClientId,
-            client_secret: paypalClientSecret,
-            environment: process.env.PAYPAL_ENVIRONMENT || 'sandbox',
-            autoCapture: process.env.PAYPAL_AUTO_CAPTURE === 'true',
-            webhook_id: process.env.PAYPAL_WEBHOOK_ID,
-          },
-        },
-        {
-          resolve: '@medusajs/medusa/payment-stripe',
-          id: 'stripe',
-          options: {
-            apiKey: stripeApiKey,
-            webhookSecret: stripeWebhookSecret,
-          },
-        },
-      ],
-    },
+    options: { providers: paymentProviders },
   };
 }
+
+console.log('✅ Cash on delivery enabled (pp_system_default)');
 
 // ── Object storage: Supabase Storage (S3-compatible) ──────────────────────────
 /**
